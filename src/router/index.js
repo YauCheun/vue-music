@@ -4,6 +4,7 @@ Vue.use(Router)
 
 import discovery from '_c/discovery'
 import playlists from '_c/playlists'
+import detaillist from '_c/detaillist'
 import songs from '_c/songs'
 import mvs from '_c/mvs'
 import ranking from '_c/ranking'
@@ -16,6 +17,7 @@ export default new Router({
     { path: '/',redirect:'/discovery'}, 
     { path: '/discovery',component: discovery},
     { path: '/playlists',component: playlists},
+    { path: '/detaillist',component: detaillist},
     { path: '/songs',component: songs},
     { path: '/mvs',component: mvs},
     { path: '/ranking',component: ranking},

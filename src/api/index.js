@@ -23,5 +23,9 @@ export default {
   //最新单曲
   getNewSong:()=>axios.post('/personalized/newsong'),
   //推荐mv
-  getRecommendMv:()=>axios.post('/personalized/mv')
+  getRecommendMv:()=>axios.post('/personalized/mv'),
+  //获取歌单详情/playlist/detail
+  getDetailList:(data)=>axios.post('/playlist/detail?id='+data),
+  // 获取歌单评论
+  getPlaylistComments:(data)=>axios.post('/comment/playlist',qs.stringify(data)),
 }

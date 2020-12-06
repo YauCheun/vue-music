@@ -55,7 +55,10 @@
     </div>
     <!-- 主体区域 -->
     <div class="main">
-      <router-view></router-view>
+      <!-- exclude="detaillist" -->
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive> 
     </div>
   </div>
 </template>

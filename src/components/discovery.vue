@@ -13,7 +13,7 @@
           推荐歌单 <i class="iconfont icon-zuoyou" style="font-size:14px;"></i>
         </h3> 
         <div class="list">
-          <div class="list-item" v-for="item in recommendList" :key="item.id">
+          <div class="list-item" v-for="item in recommendList" :key="item.id" @click="toDetailList(item.id)">
             <div class="img-wrap">
               <div class="desc-wrap">
                 <span class="desc">{{ item.copywriter }}</span>
@@ -155,6 +155,10 @@ export default {
         this.$message.error('获取推荐mv失败')
       }
     },
+    // 跳转到歌单详情
+    toDetailList(id){
+      this.$router.push(`/detaillist?id=${id}`)
+    }
   }
 }
 </script>

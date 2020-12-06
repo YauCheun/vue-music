@@ -2,12 +2,14 @@
   <div id="app">
     <top></top>
     <container></container>
+    <!-- <play></play> -->
   </div>
 </template>
 
 <script>
 import top from '@/component/top'
 import container from '@/component/container'
+// import play from '@/component/play'
 export default {
   name: 'App',
   components:{top,container}

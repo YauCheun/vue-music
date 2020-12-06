@@ -2,7 +2,8 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import { Input,Button,Tabs,TabPane,Carousel,CarouselItem,Message,Tag,Scrollbar } from 'element-ui';
+import store from "./store"
+import { Input,Button,Tabs,TabPane,Pagination,Carousel,CarouselItem,Message,Tag,Scrollbar,Table,TableColumn} from 'element-ui';
 // 在调用 Vue.use 前，给 Message 添加 install 方法
 Message.install = function (Vue) {
   Vue.prototype.$message = Message
@@ -16,8 +17,35 @@ Vue.use(CarouselItem)
 Vue.use(Message)
 Vue.use(Tag)
 Vue.use(Scrollbar)
+Vue.use(Table)
+Vue.use(TableColumn)
+Vue.use(Pagination)
 
+Vue.filter('dateFormat', function (originVal) {
+  const dt = new Date(originVal)
 
+  const y = dt.getFullYear()
+  const m = (dt.getMonth() + 1 + '').padStart(2, '0')
+  const d = (dt.getDate() + '').padStart(2, '0')
+
+  const hh = (dt.getHours() + '').padStart(2, '0')
+  const mm = (dt.getMinutes() + '').padStart(2, '0')
+  const ss = (dt.getSeconds() + '').padStart(2, '0')
+
+  return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
+})
+Vue.filter('playTimeFormat', function (originVal) {
+  let duration = originVal
+  let min = parseInt(duration / 1000 / 60)
+  if (min < 10) {
+    min = '0' + min
+  }
+  let sec = parseInt((duration / 1000) % 60)
+  if (sec < 10) {
+    sec = '0' + sec
+  }
+  return `${min}:${sec}`
+})
 
 // 公共样式
 import "@/assets/icon/iconfont.css";
@@ -29,6 +57,7 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })
