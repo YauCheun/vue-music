@@ -9,7 +9,21 @@ module.exports = {
     // 路径
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      '/api': {
+        target: 'https://music.163.com/api/', //API服务器的地址
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api': ''
+        },
+        // 突破host和origin的限制
+        headers: {
+          referer: 'http://music.163.com',
+          origin: 'http://music.163.com',
+          host: 'music.163.com'
+        }
+      }
+    },
 
     // 各种开发服务器设置
     host: 'localhost', //能被process.env.HOST覆盖

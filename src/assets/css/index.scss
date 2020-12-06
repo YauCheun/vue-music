@@ -1,18 +1,23 @@
-$bgColor: var(--myBgColor ,#c20c0c);
-$fontColor: var(--myFontColor ,#000);
-
+// $bgColor: var(--myBgColor ,#c20c0c);
+// $fontColor: var(--myFontColor ,#000);
+@import "./global.scss";
 //顶部区域，logo搜索框
 .top-container {
-  height: 50px;
+  height: 55px;
   width: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   align-items: center;
   background: $bgColor;
+  border-bottom: 3px solid #ec4141;
   .top-img{
     height: 100%;
     width: 200px;
+    color: #fff;
+    font-family: monospace;
+    font-size: 18px;
+    font-weight: bold;
     background:$bgColor;
     display: -webkit-box;
     display: -ms-flexbox;
@@ -41,8 +46,9 @@ $fontColor: var(--myFontColor ,#000);
       height: 25px;
       width: 25px;
       margin: 0 5px;
-      color: #fff;
-      background-color: #f0f0f0;
+      color: #f0f0f0;
+      background-color:  $bgColor;
+      opacity: 0.5;
       -webkit-box-pack: center;
       -ms-flex-pack: center;
       justify-content: center;
@@ -53,7 +59,7 @@ $fontColor: var(--myFontColor ,#000);
       border-radius: 50%;
       cursor: pointer;
       &:hover{
-        background-color:  $bgColor;
+        background-color:  $fontColor;
       }
       i{
         font-size: 12px;
@@ -75,53 +81,49 @@ $fontColor: var(--myFontColor ,#000);
       border-radius: 50%;
     }
     i:first-child{
-      color: #c20c0c;
+      color: $themeColor;
     }
     i:nth-child(2){
-      color: #333;
-    }
-    i:last-child{
-      color: #fff;
+      color: $themeColor;
     }
   }
 }
 
 // 主题左边导航栏部分
 .container{
-  height: calc(100% - 50px);
+  height: calc(100% - 105px);
   width: 100%;
   display: flex;
   .nav{
     width: 200px;
     height: 100%;
-    background: #f0f0f0;
+    background: $bodyColor;
     ul {
       padding-top: 3px;
       width: 100%;
-      height: calc(100% - 115px);
+      height: 100%;
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
+      border-right: 1px solid #ccc;
       li{
-        width: 100%;
-        height:50px;
-        line-height: 50px;
+        width: 80%;
+        height:40px;
+        margin: 5px auto;
+        line-height: 40px;
         list-style: none;
         text-align: left;
         -webkit-transition: .5s;
         transition: .5s;
         -webkit-box-sizing: border-box;
         box-sizing: border-box;
-        &:hover{
-          cursor: pointer;
-          background: #f0a9a9;
-          color: $bgColor;
-        }
         a{
-          color: #000;
+          color:$fontColor;
+          border-radius: 5px;
           font-size: 14px;
+          background-color: $bodyColor;
           font-style:normal;
           width: 100%;
-          height: 50px;
+          height: 40px;
           display: -webkit-box;
           display: -ms-flexbox;
           display: flex;
@@ -133,10 +135,18 @@ $fontColor: var(--myFontColor ,#000);
           align-items: center;
           -webkit-box-sizing: border-box;
           box-sizing: border-box;
+          &:hover{
+            cursor: pointer;
+            background: $hoverColor;
+            border-radius: 5px;
+          }
+          &:hover span i{
+            color: $fontColor;
+          }
           span{
             display: inline-block;
             width: 120px;
-            height: 50px;
+            height: 40px;
             text-align: left;
             i{
               font-style: normal;
@@ -151,8 +161,14 @@ $fontColor: var(--myFontColor ,#000);
           }
         }
         .router-link-active{
-          border-right: 2px solid #f0a9a9;
-          color: #c20c0c;
+          color: $fontColor;
+          border-radius: 5px;    
+          background-color: $hoverColor;
+          box-sizing: border-box;
+          span i {
+            font-weight: bold;
+            font-size: 16px;
+          }
         }
       }
     }
@@ -160,5 +176,8 @@ $fontColor: var(--myFontColor ,#000);
   .main{
     width: calc(100% - 200px);
     height: 100%;
+    .el-scrollbar__wrap {
+      overflow-x: hidden;
+    }
   }
 }

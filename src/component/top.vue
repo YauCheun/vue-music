@@ -1,6 +1,7 @@
 <template >
   <div class="top-container">
     <div class="top-img">
+      <span>Zy音乐盒</span>
     </div>
     <div class="top-btn">
       <div class="btn">
@@ -21,7 +22,6 @@
     <div class="top-theme">
       <i class="iconfont" :class="{'icon-icon-test':0==current,'icon-yinle2':0!=current}" @click="changetheme(0)"></i>
       <i class="iconfont" :class="{'icon-icon-test':1==current,'icon-yinle2':1!=current}" @click="changetheme(1)"></i>
-      <i class="iconfont" :class="{'icon-icon-test':2==current,'icon-yinle2':2!=current}" @click="changetheme(2)"></i>
     </div>
   </div>
 </template>
@@ -40,11 +40,17 @@ export default {
     changetheme(index){
       this.current=index
       if(index==0){
-        document.getElementsByTagName('body')[0].style.setProperty('--myBgColor', '#c20c0c')
+        document.getElementsByTagName('body')[0].style.setProperty('--myBgColor', '#EC4141')
+        document.getElementsByTagName('body')[0].style.setProperty('--myFontColor', '#373737')
+        document.getElementsByTagName('body')[0].style.setProperty('--mythemeColor', '#2B2B2B')
+        document.getElementsByTagName('body')[0].style.setProperty('--myBodyColor', '#fff')
+        document.getElementsByTagName('body')[0].style.setProperty('--myhoverColor', '#f5f5f5')
       }else if(index==1){
-        document.getElementsByTagName('body')[0].style.setProperty('--myBgColor', '#333')
-      }else{
-        document.getElementsByTagName('body')[0].style.setProperty('--myBgColor', '#fff')
+        document.getElementsByTagName('body')[0].style.setProperty('--myBgColor', '#2B2B2B')
+        document.getElementsByTagName('body')[0].style.setProperty('--myFontColor', '#b6b6b6')
+        document.getElementsByTagName('body')[0].style.setProperty('--mythemeColor', '#EC4141')
+        document.getElementsByTagName('body')[0].style.setProperty('--myBodyColor', '#2B2B2B')
+        document.getElementsByTagName('body')[0].style.setProperty('--myhoverColor', '#333')
       }
     }
   }

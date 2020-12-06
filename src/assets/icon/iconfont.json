@@ -6,6 +6,41 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "2985264",
+      "name": "SQ",
+      "font_class": "sq",
+      "unicode": "e628",
+      "unicode_decimal": 58920
+    },
+    {
+      "icon_id": "3526707",
+      "name": "播放",
+      "font_class": "bofang-list",
+      "unicode": "e629",
+      "unicode_decimal": 58921
+    },
+    {
+      "icon_id": "7078468",
+      "name": "播放",
+      "font_class": "bofang5",
+      "unicode": "e6dc",
+      "unicode_decimal": 59100
+    },
+    {
+      "icon_id": "5000394",
+      "name": "播放",
+      "font_class": "bofang3",
+      "unicode": "e636",
+      "unicode_decimal": 58934
+    },
+    {
+      "icon_id": "8338384",
+      "name": "播放",
+      "font_class": "bofang4",
+      "unicode": "ec12",
+      "unicode_decimal": 60434
+    },
+    {
       "icon_id": "11930031",
       "name": "√",
       "font_class": "icon-test",
