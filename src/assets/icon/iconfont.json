@@ -6,6 +6,34 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1100250",
+      "name": "上一首",
+      "font_class": "shangyishou3",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
+      "icon_id": "1921391",
+      "name": "暂停",
+      "font_class": "zanting",
+      "unicode": "e630",
+      "unicode_decimal": 58928
+    },
+    {
+      "icon_id": "3266755",
+      "name": "列表循环",
+      "font_class": "liebiaoxunhuan",
+      "unicode": "e631",
+      "unicode_decimal": 58929
+    },
+    {
+      "icon_id": "10538958",
+      "name": "下一首",
+      "font_class": "xiayishou1",
+      "unicode": "ecad",
+      "unicode_decimal": 60589
+    },
+    {
       "icon_id": "6770089",
       "name": "下载",
       "font_class": "xiazai",

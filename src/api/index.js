@@ -28,4 +28,8 @@ export default {
   getDetailList:(data)=>axios.post('/playlist/detail?id='+data),
   // 获取歌单评论
   getPlaylistComments:(data)=>axios.post('/comment/playlist',qs.stringify(data)),
+  // 获取歌曲详情
+  GetSongDetail:(data)=>axios.post('/song/detail',qs.stringify(data)),
+  // 获取歌曲url
+  GetSongUrl:(id)=>axios.post('/song/url?id='+id+'&br=999000'),
 }

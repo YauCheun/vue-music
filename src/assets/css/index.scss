@@ -91,7 +91,7 @@
 
 // 主题左边导航栏部分
 .container{
-  height: calc(100% - 105px);
+  height: calc(100% - 125px);
   width: 100%;
   display: flex;
   .nav{
@@ -179,5 +179,6 @@
     .el-scrollbar__wrap {
       overflow-x: hidden;
     }
+    
   }
 }

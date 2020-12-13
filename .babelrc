@@ -1,5 +1,5 @@
 {
-  "presets": [["es2015",{ "modules": false }]],
+  "presets": [["stage-2"],["es2015",{ "modules": false }]],
   "plugins": [
     [
       "component",
@@ -7,6 +7,10 @@
         "libraryName": "element-ui",
         "styleLibraryName": "theme-chalk"
       }
+    ],
+    [
+      "transform-runtime",
+      "transform-object-rest-spread"
     ]
   ]
 }

@@ -1,670 +1,432 @@
 <template>
-  <div class="audiobox">
-    <div class="img" @click="golyrics">
-      <img :src="getImgUrl" alt />
-    </div>
-    <div class="audioinfo">
-      <div class="title">
-        <span>{{ 111 }}</span>
-        <span>{{ 222 }}</span>
+  <div class="control-box">
+    <div class="singer-info">
+      <div class="img">
+        <img :src="getImgUrl" alt="">
+      </div>
+      <div class="info">
+        <p class="singe-name">
+          {{this.$store.state.song.name}}
+        </p>
+        <p class="song-name">
+        {{this.$store.state.song.author}}
+        </p>
       </div>
     </div>
-    <div class="controlbox">
-      <div class="control">
-        <span class="el-icon-caret-left" @click="prevSong"></span>
-        <span
-          v-if="!isPlay"
-          class="el-icon-video-pause"
-          @click="pauseMusic"
-        ></span>
-        <span v-else class="el-icon-video-play" @click="palyMusic"></span>
-        <span class="el-icon-caret-right" @click="nextSong"></span>
+    <div class="control-progress">
+      <div class="ctrl-btn">
+        <span class="iconfont icon-suiji" v-if="clickModel%3==0" @click="changeModel"></span>
+        <span class="iconfont icon-liebiaoxunhuan" v-else-if="clickModel%3==1" @click="changeModel"></span>
+        <span class="iconfont icon-danquxunhuan" v-else="clickModel%3==2" @click="changeModel"></span>
+        <span class="iconfont icon-shangyishou3"></span>
+        <span class="iconfont icon-zanting play-stop" v-if="!isPlay" @click="pauseMusic"></span>
+        <span class="iconfont icon-bofang5 play-stop" v-else @click="playMusic"></span>
+        <span class="iconfont icon-xiayishou1"></span>
+        <span class="iconfont icon-ci-copy"></span>
       </div>
-      <div class="progress" @click="clickProgress" id="progress">
-        <div class="curentTime" :style="{ width: cwidth }"></div>
-        <div class="circle" :style="{ left: leftdis }"></div>
+      <div class="progress">
+        <span>1</span>
+        <div class="slider">
+          <el-slider v-model="currentTime"  :show-tooltip="false"></el-slider>
+        </div>
+        <span>{{duration | formDate}}</span>
       </div>
-      <div class="other">
-        <div class="time">
-          <span>{{ currentTime | formDate }}</span>
-          <span>|</span>
-          <span>{{ duration | formDate }}</span>
+    </div>
+    <div class="control-btn">
+      <div class="voice">
+        <span class="iconfont icon-shengyin"></span>
+        <ul>
+          <li v-for="index in voice" :key="index" :class="{'is-active':curVoice>=index}" @click="changeVoice(index)"></li>
+        </ul>
+      </div>
+      <div class="play-list">
+        <span class="iconfont icon-yinle-liebiao" @click="isShowPlayList=true"></span>
+      </div>
+    </div>
+    <el-drawer
+      title="播放列表"
+      v-if="isShowPlayList"
+      :visible.sync="isShowPlayList"
+      :with-header="false"
+      :modal="false"
+      :modal-append-to-body="false"
+    >
+    <div class="list">
+      <div class="list-head">
+        <div class="title">
+          <p>播放列表</p> 
+        </div>
+        <div class="show-btn">
+          <span class="total">总{{ this.$store.state.list.length }}首</span>
+          <span class="del"><i class="iconfont icon-lajixiangzizhi"></i>清空</span>
         </div>
       </div>
-      <div class="model" @click="changeModel">
-        <!-- <img
-          v-if="clickModel % 3 == 1"
-          src="./images/cm2_icn_loop@2x.png"
-          alt=""
-        />
-        <img
-          v-else-if="clickModel % 3 == 2"
-          src="./images/cm2_icn_one@2x.png"
-          alt=""
-        />
-        <img
-          v-else-if="clickModel % 3 == 0"
-          src="./images/cm2_icn_shuffle@2x.png"
-          alt=""
-        /> -->
-      </div>
-      <div class="lybox">
-        <div
-          class="lybtu"
-          :class="isly ? 'lyactive' : ''"
-          @click="isly = !isly"
+      <el-scrollbar style="height:100%">
+        <el-table
+          :data="this.$store.state.list"
+          size="mini"
+          stripe
+          :show-header="false"
+          style="width: 100%"
         >
-          词
-        </div>
-        <div class="lycont" v-if="isly">{{ val }}</div>
-      </div>
-      <div class="menu">
-        <!-- 播放列表 -->
-        <transition name="el-fade-in-linear">
-          <div v-show="show" class="menulist">
-            <div class="listitle">
-              <span>播放列表：共 {{ 333 }} 首</span>
-              <span class="el-icon-delete delete" @click="delall"></span>
-            </div>
-            <div class="scrollbox">
-              <vue-scroll :ops="ops" ref="vs">
-                <div
-                  v-for="(item, index) in 6"
-                  :key="index"
-                  class="item"
-                >
-                  <span
-                    class="name"
-                    :class="getIndex == index ? 'active_color' : ''"
-                    @click="playSong(index)"
-                    >{{ item.name }}</span
-                  >
-                  <span
-                    class="el-icon-delete delete"
-                    @click="deleteSong(index)"
-                  ></span>
-                </div>
-              </vue-scroll>
-            </div>
-            <img :src="getImgUrl" alt class="listbg" />
-            <div class="listbg-mask"></div>
-          </div>
-        </transition>
-        <!-- 播放列表图标 -->
-        <span
-          class="el-icon-tickets"
-          @click="show = !show"
-          :class="show ? 'lyactive' : ''"
-        ></span>
-      </div>
-      <audio id="myaudio" :src="getMusicUrl"></audio>
+          <el-table-column
+            label="歌名"
+            align="center"
+            >
+            <template slot-scope="scope">
+              <div style=" display: flex;align-items: center;">
+                <span style="width:100%;display: inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{scope.row.name}}</span> 
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="author"
+            align="center"
+            label="歌手">
+          </el-table-column>
+          <el-table-column
+            label="操作"
+            align="center"
+            width="80"
+            >
+            <template slot-scope="scope">
+              <div style="text-align:center;">
+                <span class="iconfont icon-lajixiangzizhi" style="cursor: pointer;"></span> 
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-scrollbar>
     </div>
-    <div class="bgbox">
-      <img :src="getImgUrl" alt class="bg" />
-      <div class="bg-mask"></div>
-    </div>
+    
+    </el-drawer>
+    <audio id="myaudio" ref="myaudio" :src="getMusicUrl"></audio>
   </div>
 </template>
+
 <script>
 import { mapGetters } from "vuex"
 export default {
-  data() {
-    return {
-      isly: false,
-      val: "",
-      show: false,
-      cwidth: "0%",
-      currentTime: "00",
-      duration: "00",
-      leftdis: "0px",
-      isPlay: true,
-      id: "",
-      prowidth: null,
-      clickModel: 1,
-      currentIndex: 0,
-      ops: {
-        //vuescroll的配置
-        vuescroll: {
-          sizeStrategy: "percent",
-          detectResize: true,
+  data(){
+    return{
+      val:'', //歌曲信息
+      voice:[1,2,3,4,5,6,7,8,9,10],
+      curVoice:1, //当前音量值
+      isShowPlayList:false,
+      currentTime:0,
+      isPlay:true, //播放状态
+      duration:'00',//歌曲总秒数
+      clickModel:1, //播放模式 1：列表循环 2：单纯循环 0：随机
+      tableData:[
+        {
+          name:11,
+          singerName:22
         },
-        scrollPanel: {
-          scrollingX: false,
+        {
+          name:11,
+          singerName:22
         },
-        rail: {},
-        bar: {
-          showDelay: 500,
-          onlyShowBarOnScroll: false,
-          keepShow: false,
-          background: "#b3c0d1",
-          opacity: 1,
-          hoverStyle: false,
-          specifyBorderRadius: false,
-          minSize: false,
-          size: "6px",
-          disable: false,
-        },
-      },
+        {
+          name:11,
+          singerName:22
+        }
+      ]
     }
   },
-  // computed: {
-  //   // vue辅助函数
-  //   ...mapGetters([
-  //     "getName",
-  //     "getAuthor",
-  //     "getMusicUrl",
-  //     "getImgUrl",
-  //     "getIndex"
-  //   ]),
-  // },
-  // filters: {
-  //   formDate(date) {
-  //     //格式化时间过滤器
-  //     var m = parseInt(date / 60)
-  //     if (m < 10) {
-  //       m = "0" + m
-  //     }
-  //     var s = parseInt(date % 60)
-  //     if (s < 10) {
-  //       s = "0" + s
-  //     }
-  //     return m + ":" + s
-  //   },
-  // },
-  // mounted() {
-  //   this.getProWidth()
-  //   var audio = document.getElementById("myaudio")
-
-  //   window.onresize = this.getProWidth
-
-  //   //监听音频是否可以开始播放
-  //   audio.addEventListener("canplay", () => {
-  //     this.val = this.getName + " — " + this.getAuthor
-  //     this.$store.commit("upDateStatus", this.$store.state.song.songName)
-  //     this.duration = audio.duration
-  //   })
-
-  //   // 监听歌曲是否已经播放结束
-  //   audio.addEventListener("ended", () => {
-  //     if (this.clickModel % 3 == 2) {
-  //       //当播放模式是循环时
-  //       audio.load()
-  //       audio.setAttribute("autoplay", "autoplay")
-  //     } else {
-  //       this.$store.commit("next", { model: this.clickModel })
-  //     }
-  //   })
-
-  //   // 监听音频播放位置的改变
-  //   audio.addEventListener("timeupdate", () => {
-  //     this.currentTime = audio.currentTime
-  //     this.cwidth = (this.currentTime / this.duration) * 100 + "%"
-  //     this.leftdis =
-  //       this.prowidth * (this.currentTime / this.duration) - 9 + "px"
-  //     if (this.$store.state.song.lyric) {
-  //       let lyricArray = this.$store.state.song.lyric
-  //       let length = lyricArray.length
-  //       if (length) {
-  //         //获取歌词数字
-  //         // //计算滚动条的位置
-  //         if (this.currentIndex >= 8) {
-  //           this.scrolltop = (this.currentIndex - 8) * 30
-  //         }
-  //         //遍历所有歌词
-  //         //最后一句歌词没有下一句,所以不需要跟下一句的时间做比较
-  //         if (this.currentIndex == length - 2) {
-  //           //判断当前的时间是否大于等于最后一句的时间
-  //           if (this.currentTime >= lyricArray[length - 1][0]) {
-  //             //正在唱最后一句
-  //             this.currentIndex = length - 1
-  //             this.val = lyricArray[length - 1][1]
-  //           }
-  //         } else {
-  //           for (var i = 0; i < length - 1; i++) {
-  //             //将每个歌曲进度都跟数组中的歌词比较,在当前歌词的时间到下一句歌词的时间范围之内
-  //             if (
-  //               this.currentTime >= lyricArray[i][0] &&
-  //               this.currentTime < lyricArray[i + 1][0]
-  //             ) {
-  //               //设置正在播放的行号
-  //               this.currentIndex = i
-  //               this.val = lyricArray[i][1]
-  //             }
-  //           }
-  //         }
-  //       }
-  //     }
-  //   })
-
-  //   //获取link（ico）标签（为了修改成歌曲的图片）
-  //   var links = document.getElementsByTagName("link")[0]
-
-  //   audio.addEventListener("play", () => {
-  //     document.title = this.$store.state.song.name
-  //     links.setAttribute("href", this.getImgUrl)
-  //     //播放状态
-  //     this.isPlay = false
-  //   })
-  //   audio.addEventListener("pause", () => {
-  //     document.title = "深的个人博客"
-  //     links.setAttribute("href", "/logo.ico")
-  //     //暂停状态
-  //     this.isPlay = true
-  //   })
-  // },
-  // methods: {
-  //   formDate(date) {
-  //     //格式化时间过滤器
-  //     var m = parseInt(date / 60)
-  //     if (m < 10) {
-  //       m = "0" + m
-  //     }
-  //     var s = parseInt(date % 60)
-  //     if (s < 10) {
-  //       s = "0" + s
-  //     }
-  //     return m + ":" + s
-  //   },
-  //   // 跳转到歌词页
-  //   golyrics() {
-  //     if (this.getMusicUrl == "") {
-  //       this.$notify({
-  //         title: "警告",
-  //         message: "暂无播放列表,请去音乐库里选择要播放的音乐",
-  //         type: "warning",
-  //       })
-  //     } else {
-  //       this.$router.push("/musichome/misiclyrics")
-  //     }
-  //   },
-  //   // 获取滚动条的宽度
-  //   getProWidth() {
-  //     var progress = document.getElementById("progress")
-  //     this.prowidth = parseInt(window.getComputedStyle(progress).width)
-  //   },
-
-  //   //通过点击控制进度
-  //   clickProgress(e) {
-  //     var audio = document.getElementById("myaudio")
-  //     this.cwidth = (e.offsetX / this.prowidth) * 100 + "%"
-  //     this.leftdis = e.offsetX - 9 + "px"
-  //     audio.currentTime = parseInt((e.offsetX / this.prowidth) * this.duration)
-  //   },
-
-  //   // 点击播放列表
-  //   playSong(index) {
-  //     this.$store.commit("upDateIndex", index)
-  //   },
-  //   // 上一首
-  //   prevSong() {
-  //     this.$store.commit("prev", { model: this.clickModel })
-  //   },
-
-  //   // 下一首
-  //   nextSong() {
-  //     this.$store.commit("next", { model: this.clickModel })
-  //   },
-
-  //   // 播放按钮
-  //   palyMusic() {
-  //     if (this.$store.state.list.length == 0) {
-  //       this.$notify({
-  //         title: "警告",
-  //         message: "暂无播放列表,请去音乐库里选择要播放的音乐",
-  //         type: "warning",
-  //       })
-  //     } else {
-  //       var audio = document.getElementById("myaudio")
-  //       audio.play()
-  //     }
-  //   },
-
-  //   // 暂停音乐
-  //   pauseMusic() {
-  //     var audio = document.getElementById("myaudio")
-  //     audio.pause()
-  //   },
-
-  //   //删除播放列表里的歌曲
-  //   deleteSong(index) {
-  //     this.$store.commit("delete", index)
-  //   },
-
-  //   // 清空歌曲列表
-  //   delall() {
-  //     this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
-  //       confirmButtonText: "确定",
-  //       cancelButtonText: "取消",
-  //       type: "warning",
-  //     })
-  //       .then(() => {
-  //         this.$store.commit("deleteAll")
-  //         this.$message({
-  //           type: "success",
-  //           message: "删除成功!",
-  //         })
-  //       })
-  //       .catch(() => {
-  //         this.$message({
-  //           type: "info",
-  //           message: "已取消删除",
-  //         })
-  //       })
-  //   },
-
-  //   // 点击更换播放模式
-  //   changeModel() {
-  //     this.clickModel++
-  //   },
-  // },
+  filters: {
+    formDate(date) {
+      //格式化时间过滤器
+      var m = parseInt(date / 60)
+      if (m < 10) {
+        m = "0" + m
+      }
+      var s = parseInt(date % 60)
+      if (s < 10) {
+        s = "0" + s
+      }
+      return m + ":" + s
+    },
+  },
+  mounted(){
+    let audio = this.$refs.myaudio
+    //监听音频是否可以开始播放
+    audio.addEventListener("canplay", () => {
+      this.val = this.getName + " — " + this.getAuthor
+      this.$store.commit("upDateStatus", this.$store.state.song.songName)
+      this.duration = audio.duration
+    })
+      // 监听歌曲是否已经播放结束
+    audio.addEventListener("ended", () => {
+      if (this.clickModel % 3 == 2) {
+        //当播放模式是循环时
+        audio.load()
+        audio.setAttribute("autoplay", "autoplay")
+      } else {
+        this.$store.commit("next", { model: this.clickModel })
+      }
+    })
+    audio.addEventListener("play", () => {
+      // document.title = this.$store.state.song.name
+      // links.setAttribute("href", this.getImgUrl)
+      //播放状态
+      this.isPlay = false
+    })
+    audio.addEventListener("pause", () => {
+      // document.title = "深的个人博客"
+      // links.setAttribute("href", "/logo.ico")
+      //暂停状态
+      this.isPlay = true
+    })
+  },
+  computed:{
+    ...mapGetters([
+      "getName",
+      "getAuthor",
+      "getMusicUrl",
+      "getImgUrl",
+      "getIndex",
+    ])
+  },
+  methods:{
+    //改变音量
+    changeVoice(index){
+      this.curVoice=index
+    },
+    changeModel(){
+      this.clickModel++
+    },
+    //播放音乐
+    playMusic(){
+      if (this.$store.state.list.length == 0) {
+        this.$message({
+          message: "暂无播放列表,请去音乐库里选择要播放的音乐",
+          type: "warning",
+        })
+      } else {
+        var audio = this.$refs.myaudio
+        audio.play()
+      }
+    },
+    //暂停音乐
+    pauseMusic(){
+      var audio = this.$refs.myaudio
+      audio.pause()
+    }
+  }
 }
 </script>
-<style lang="scss" scoped>
-.lyactive {
-  color: rgb(98, 158, 218) !important;
-}
-.audiobox {
-  user-select: none;
-  height: 50px;
-  width: 100%;
-  display: flex;
-  position: relative;
-  .img {
-    z-index: 1;
-    width: 50px;
-    height: 50px;
-    border-radius: 5px;
-    margin: 5px;
-    margin-left: 20px;
-    overflow: hidden;
-    box-shadow: 0 0px 8px rgba(13, 13, 14, 0.5), 0 0 8px rgba(10, 16, 20, 0.5);
-    img {
-      height: 50px;
-      width: 50px !important;
-    }
-  }
-  .img:hover {
-    cursor: pointer;
-  }
-  .audioinfo {
-    z-index: 1;
-    width: 150px;
-    height: 100%;
-    .title {
-      span {
-        height: 25px;
-        line-height: 25px;
-        display: inline-block;
-        margin: 0px;
-        padding: 0px;
-        width: 140px;
-        margin: 0px 5px;
-        text-align: center;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        text-shadow: 0 0px 5px rgba(13, 13, 14, 0.5),
-          0 0 5px rgba(10, 16, 20, 0.5);
-      }
-      span:nth-child(1) {
-        margin-top: 5px;
-        font-size: 14px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        color: rgb(218, 214, 214);
-      }
-      span:nth-child(2) {
-        font-size: 12px;
-        color: rgb(245, 240, 240);
-      }
-    }
-  }
-  .controlbox {
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    height: 60px;
-    width: calc(100% - 230px);
-    .control {
-      display: flex;
-      height: 60px;
-      justify-content: center;
-      align-items: center;
-      width: 120px;
-      span {
-        font-size: 30px;
-        width: 40px;
-        transition: 0.3s;
-        color: rgb(255, 255, 255);
-        text-align: center;
-      }
-      span:hover {
-        color: rgb(98, 158, 218);
-        cursor: pointer;
-      }
-    }
-    .progress {
-      z-index: 1;
-      height: 8px;
-      width: calc(100% - 390px);
-      margin: 0px 10px;
-      background: rgb(214, 214, 213);
-      border-radius: 4px;
-      display: flex;
-      position: relative;
-      .curentTime {
-        border-radius: 4px;
-        height: 8px;
-        background: rgb(98, 158, 218);
-        width: 30%;
-      }
-      .circle {
-        box-sizing: border-box;
-        height: 18px;
-        width: 18px;
-        position: absolute;
-        top: -4px;
-        border: 2px solid white;
-        border-radius: 50%;
-        background: rgb(98, 158, 218);
-      }
-    }
-    .progress:hover {
-      cursor: pointer;
-    }
-  }
-  .other {
-    width: 120px;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1;
-    .time {
-      font-size: 14px;
-      color: white;
-      span:nth-child(2) {
-        margin: 0px 10px;
-      }
-    }
-  }
-  .lybox {
-    height: 60px;
-    width: 50px;
-    font-size: 18px;
-    text-align: center;
-    .lybtu {
-      height: 60px;
-      line-height: 60px;
-      color: white;
-    }
-    .lybtu:hover {
-      cursor: pointer;
-    }
-    .lycont {
-      padding: 15px 20px;
-      position: absolute;
-      border-radius: 5px;
-      font-size: 25px;
-      top: -85px;
-      left: 50%;
-      text-align: center;
-      transform: translateX(-50%);
-      color: #ffffff;
-      background: rgba(27, 103, 165, 0.7);
-    }
-  }
-  .model {
-    width: 50px;
-    height: 60px;
 
-    img {
-      width: 50px;
-      margin-top: 6px;
+
+<style lang="scss">
+@import "@/assets/css/global.scss";
+  .progress{
+    .el-slider .el-slider__runway{
+      margin: 0;
+      margin-top:5px;
+      height:3px;
+      border-radius: 1px;
+      &:hover .el-tooltip.el-slider__button{
+        opacity: 1;
+      }
+      .el-slider__bar{
+        background-color: #EC4141;
+        height:3px;
+      }
+      .el-slider__button-wrapper{
+        top:-16px;
+      }
+      .el-tooltip.el-slider__button{
+        width:8px;
+        height:8px;
+        opacity: 0;
+        background-color:  #EC4141;
+        border:none;
+      }
     }
   }
-  .menu {
-    z-index: 1;
-    font-size: 25px;
-    width: 50px;
-    height: 60px;
+  .control-box{
+    .el-drawer__open .el-drawer.rtl{
+      height: calc(100% - 125px);
+      margin-top:55px;
+      background-color: $bodyColor;
+      color:$fontColor;
+    }
+  }
+</style>
+<style lang="scss" scoped>
+@import "@/assets/css/global.scss";
+.control-box{
+  height:70px;
+  display: flex;
+  flex-direction: row;
+  width:100%;
+  background-color: $playBgcColor;
+  .singer-info{
+    height: 100%;
+    width:200px;
+    padding:10px;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    position: relative;
-    .menulist {
-      position: absolute;
-      border-radius: 5px;
-      top: -390px;
-      left: -215px;
-      height: 380px;
-      width: 250px;
-      background: white;
-      box-shadow: 0 10px 8px rgba(13, 13, 14, 0.2),
-        0 0 8px rgba(10, 16, 20, 0.2);
-      transition: 0.5s;
-      overflow: hidden;
-      .listitle {
-        height: 40px;
-        font-size: 17px;
+    flex-direction: row;
+    .img{
+      img{
+        width:50px;
+        height:50px;
+        border-radius: 5px;
+      }
+    }
+    .info{
+      width: 130px;
+      height:100%;
+      padding-top:5px;
+      padding-left: 20px;
+      color:$fontColor;
+      .singe-name{
+        font-size: 15px;
+        line-height: 22px;
+        overflow:hidden; //超出的文本隐藏
+        text-overflow:ellipsis; //溢出用省略号显示
+        white-space:nowrap; //溢出不换
+      }
+      .song-name{
+        line-height: 22px;
+        font-size: 13px;
+        overflow:hidden; //超出的文本隐藏
+        text-overflow:ellipsis; //溢出用省略号显示
+        white-space:nowrap; //溢出不换
+      }
+    }
+  }
+  .control-progress{
+    height: 100%;
+    width: 50%;
+    display: flex;
+    padding:5px;
+    flex-direction: column;
+    justify-content:center;
+    margin: 0 auto;
+    .ctrl-btn{
+      height:35px;
+      width:230px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      margin: 0 auto;
+      .play-stop{
+        color:$fontColor;
+        width:30px;
+        height:30px;
+        box-sizing: border-box;
+        border-radius: 50%;
+        background-color: $hoverColor;
+        padding: 5px 0 0 5px;
+        &:hover{
+          background-color: #d3d3d3;
+          color: #000;
+        }
+      }
+      span{
+        color:$fontColor;
+        font-size: 20px;
+        cursor: pointer;
+        &:hover{
+          color: #EC4141;
+        }
+      }
+    }
+    .progress{
+      height:20px;
+      width:100%;
+      display: flex;
+      flex-direction: row;
+      span{
+        color:$fontColor;
+        width: 25px;
+        font-size: 14px;
+      }
+      .slider{
+        width:calc(100% - 70px);
+        margin: 0 10px;
+        padding-top:1px;
+      }
+    }
+  }
+  .control-btn{
+    height: 100%;
+    width:200px;
+    display: flex;
+    padding: 0 20px;
+    box-sizing: border-box;
+    justify-content:space-between;
+    .voice{
+      height:100%;
+      display: flex;
+      align-items: center;
+      span{
+        font-size: 18px;
+        margin-right:6px;
+        color:$fontColor;
+      }
+      ul{
+        width: 70px;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-pack: distribute;
+        justify-content: space-around;
+        li{
+          list-style: none;
+          width: 4px;
+          cursor: pointer;
+          height: 12px;
+          background: $bodyColor;
+          border-radius: 2px
+        }
+        .is-active{
+          background-color: #EC4141;
+        }
+      }
+    }
+    .play-list{
+      display: flex;
+      align-items: center;
+      span{
+        color:$fontColor;
+        cursor: pointer;
+        font-size: 20px;
+      }
+    }
+  }
+  .list{
+    background-color: $bodyColor;
+    color:$fontColor;
+    .list-head{
+      .title{
+        text-align: center;
+        height:32px;
+        width:100%;
+        line-height: 32px;
+        margin: 5px auto;
+        background-color: $hoverColor;
+      }
+      .show-btn{
         display: flex;
         justify-content: space-between;
-        border-bottom: 1px solid rgb(255, 255, 255);
-        position: relative;
-        z-index: 5;
-        span {
-          z-index: 1;
-          color: rgb(255, 255, 255);
-          display: inline-block;
-          height: 40px;
-          line-height: 40px;
-          padding: 0px 10px;
+        font-size: 12px;
+        padding:0 10px;
+        margin: 5px 0;
+        align-items: center;
+        .total{
+          color:$themeColor;
         }
-        .delete:hover {
-          color: #ad0a49;
+        .del {
+          cursor: pointer;
+          .iconfont{
+            margin-right: 6px;
+          }
         }
-      }
-      .scrollbox {
-        height: calc(100% - 40px);
-      }
-      .item {
-        z-index: 1;
-        line-height: 30px;
-        height: 30px;
-        color: rgb(255, 255, 255);
-        font-size: 14px;
-        width: 250px;
-        vertical-align: middle;
-        .name {
-          vertical-align: middle;
-          padding: 0px 10px;
-          display: inline-block;
-          width: 190px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-        .active_color {
-          color: #ad0a49;
-        }
-        .delete {
-          vertical-align: middle;
-          width: 30px;
-          display: inline-block;
-          height: 30px;
-          line-height: 30px;
-          text-align: center;
-          padding-right: 10px;
-        }
-        .delete:hover {
-          color: crimson;
-        }
-      }
-      .item:hover {
-        cursor: pointer;
-        background: #629eda;
-        color: white;
-      }
-      .listbg {
-        height: 380px;
-        position: absolute;
-        top: 0px;
-        // left: 0px;
-        // -webkit-filter: blur(20px);
-        // filter: blur(0px);
-        left: 50%;
-        transform: translateX(-50%);
-      }
-      .listbg-mask {
-        height: 380px;
-        width: 100%;
-        position: absolute;
-        top: 0px;
-        left: 0px;
-        background-color: rgba(0, 0, 0, 0.3);
       }
     }
-    span {
-      transition: 0.3s;
-    }
-    span:hover {
-      cursor: pointer;
-    }
   }
-  .bgbox {
-    height: 60px;
-    width: 100%;
-    overflow: hidden;
-    position: absolute;
-  }
-  .bg {
-    width: 100%;
-    position: absolute;
-    left: 0;
-    top: -350px;
-    right: 0;
-    bottom: 0;
-    z-index: 0;
-    // -webkit-filter: blur(20px);
-    // filter: blur(20px);
-  }
-  .bg-mask {
-    width: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.3);
-  }
-}
-.active {
-  color: white;
-  background: #629eda;
-}
-.__vuescroll {
-  z-index: 1;
+
 }
 </style>

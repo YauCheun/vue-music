@@ -52,6 +52,7 @@
     <el-tab-pane label="歌曲列表" name="1">
       <el-table
         :data="tableData"
+        stripe
         style="width: 100%"
       >
         <!-- <el-table-column
@@ -70,7 +71,7 @@
           <template slot-scope="scope">
             <div class="img">
               <img :src="scope.row.picUrl+'?param=130y130'" style="width:50px;" alt="">
-              <i class="iconfont icon-bofang5 play"></i>
+              <i class="iconfont icon-bofang5 play" @click="playSong(scope.row)"></i>
             </div> 
           </template>
         </el-table-column>
@@ -158,6 +159,7 @@
 
 <script>
 import api from "@/api"
+import { mapActions  } from "vuex"
 export default {
   name:'detaillist',
   data(){
@@ -196,6 +198,14 @@ export default {
   //   }
   // },
   methods:{
+    ...mapActions([
+      'getSong'
+    ]),
+    //播放音乐
+    playSong(row){
+      this.getSong({id:row.id,autoPlay:true})
+      console.log(row)
+    },
     //获取歌单详情
     async getDetailList(id){
       try {
@@ -486,26 +496,43 @@ export default {
 </style>
 <style lang="scss">
 @import "@/assets/css/global.scss";
+.el-table{
+  &::before{
+    height:0;
+  }
+}
 thead.has-gutter{
   tr{
-    background: $bodyColor;
+    background: $bodyColor!important;
     border-bottom:1px solid $hoverColor;
     th{
-      background: $bodyColor;
-      border-bottom:1px solid $hoverColor!important;
+      background: $bodyColor!important;
+      border-bottom:none;
+      // border-bottom:1px solid $hoverColor!important;
     }
   }
 }
 tr.el-table__row{
-  background: $bodyColor;
+  cursor: pointer;
+  background: $bodyColor!important;
   &:hover td{
-    background: $hoverColor!important;
+    background-color:#F5F7FA!important;
   }
   td{
     background: $bodyColor;
-    border-bottom:1px solid $hoverColor!important;
+    border-bottom:none;
   }
 
+}
+tr.el-table__row.el-table__row--striped{
+  background: $hoverColor!important;
+  &:hover td{
+    background-color:#F5F7FA!important;
+  }
+  td{
+    background: $hoverColor!important;
+    border-bottom:none;
+  }
 }
 .tabs {
   .el-tabs__item{

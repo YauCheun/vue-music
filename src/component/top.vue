@@ -45,12 +45,14 @@ export default {
         document.getElementsByTagName('body')[0].style.setProperty('--mythemeColor', '#2B2B2B')
         document.getElementsByTagName('body')[0].style.setProperty('--myBodyColor', '#fff')
         document.getElementsByTagName('body')[0].style.setProperty('--myhoverColor', '#f5f5f5')
+        document.getElementsByTagName('body')[0].style.setProperty('--myPlayBgcColor', '#f5f5f5')
       }else if(index==1){
         document.getElementsByTagName('body')[0].style.setProperty('--myBgColor', '#2B2B2B')
         document.getElementsByTagName('body')[0].style.setProperty('--myFontColor', '#b6b6b6')
         document.getElementsByTagName('body')[0].style.setProperty('--mythemeColor', '#EC4141')
         document.getElementsByTagName('body')[0].style.setProperty('--myBodyColor', '#2B2B2B')
         document.getElementsByTagName('body')[0].style.setProperty('--myhoverColor', '#333')
+        document.getElementsByTagName('body')[0].style.setProperty('--myPlayBgcColor', '#222225')
       }
     }
   }
