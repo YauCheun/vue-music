@@ -18,10 +18,10 @@
         <span class="iconfont icon-suiji" v-if="clickModel%3==0" @click="changeModel"></span>
         <span class="iconfont icon-liebiaoxunhuan" v-else-if="clickModel%3==1" @click="changeModel"></span>
         <span class="iconfont icon-danquxunhuan" v-else="clickModel%3==2" @click="changeModel"></span>
-        <span class="iconfont icon-shangyishou3"></span>
+        <span class="iconfont icon-shangyishou3" @click="prev"></span>
         <span class="iconfont icon-zanting play-stop" v-if="!isPlay" @click="pauseMusic"></span>
         <span class="iconfont icon-bofang5 play-stop" v-else @click="playMusic"></span>
-        <span class="iconfont icon-xiayishou1"></span>
+        <span class="iconfont icon-xiayishou1" @click="next"></span>
         <span class="iconfont icon-ci-copy"></span>
       </div>
       <div class="progress">
@@ -58,7 +58,7 @@
         </div>
         <div class="show-btn">
           <span class="total">总{{ this.$store.state.list.length }}首</span>
-          <span class="del"><i class="iconfont icon-lajixiangzizhi"></i>清空</span>
+          <span class="del" @click="deleteAll"><i class="iconfont icon-lajixiangzizhi"></i>清空</span>
         </div>
       </div>
       <el-scrollbar style="height:100%">
@@ -66,6 +66,7 @@
           :data="this.$store.state.list"
           size="mini"
           stripe
+          @row-click="onClick"
           :show-header="false"
           style="width: 100%"
         >
@@ -75,6 +76,9 @@
             >
             <template slot-scope="scope">
               <div style=" display: flex;align-items: center;">
+                <div v-if="scope.$index==$store.state.index" style="display:inline-block;width:14px;height:100%;">
+                  <img src="../assets/images/dh.gif" alt="">
+                </div>
                 <span style="width:100%;display: inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{scope.row.name}}</span> 
               </div>
             </template>
@@ -111,7 +115,7 @@ export default {
     return{
       val:'', //歌曲信息
       voice:[1,2,3,4,5,6,7,8,9,10],
-      curVoice:1, //当前音量值
+      curVoice:5, //当前音量值
       isShowPlayList:false,
       currentTime:0,
       isPlay:true, //播放状态
@@ -149,6 +153,7 @@ export default {
   },
   mounted(){
     let audio = this.$refs.myaudio
+    audio.volume=this.curVoice/10
     //监听音频是否可以开始播放
     audio.addEventListener("canplay", () => {
       this.val = this.getName + " — " + this.getAuthor
@@ -191,6 +196,8 @@ export default {
     //改变音量
     changeVoice(index){
       this.curVoice=index
+      var audio = this.$refs.myaudio
+      audio.volume=this.curVoice/10
     },
     changeModel(){
       this.clickModel++
@@ -211,6 +218,23 @@ export default {
     pauseMusic(){
       var audio = this.$refs.myaudio
       audio.pause()
+    },
+    //上一首
+    prev(){
+      this.$store.commit("prev",{model:this.clickModel})
+    },
+    //下一首
+    next(){
+      this.$store.commit("next",{model:this.clickModel})
+    },
+    //点击切换切换歌曲
+    onClick(data){
+      this.$store.dispatch("getSong",{id:data.id,autoPlay:true})
+    },
+    // 清空播放列表
+    deleteAll(){
+      this.$store.commit("deleteAll")
+      this.pauseMusic()
     }
   }
 }
@@ -424,6 +448,11 @@ export default {
             margin-right: 6px;
           }
         }
+      }
+    }
+    .del,.iconfont.icon-lajixiangzizhi{
+      &:hover{
+        color:#EC4141;
       }
     }
   }

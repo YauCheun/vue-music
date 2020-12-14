@@ -12,7 +12,13 @@ import container from '@/component/container'
 import play from '@/component/play'
 export default {
   name: 'App',
-  components:{top,container,play}
+  components:{top,container,play},
+  mounted(){
+    let musicInfo =JSON.parse(window.localStorage.getItem("musicState"))
+    if(musicInfo){
+      this.$store.commit("pushlist",musicInfo)
+    }
+  }
 }
 </script>
 

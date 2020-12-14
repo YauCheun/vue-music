@@ -501,6 +501,9 @@ export default {
     height:0;
   }
 }
+.el-table--scrollable-x .el-table__body-wrapper{
+  overflow-x: hidden;
+}
 thead.has-gutter{
   tr{
     background: $bodyColor!important;
