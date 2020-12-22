@@ -22,12 +22,12 @@
         <span class="iconfont icon-zanting play-stop" v-if="!isPlay" @click="pauseMusic"></span>
         <span class="iconfont icon-bofang5 play-stop" v-else @click="playMusic"></span>
         <span class="iconfont icon-xiayishou1" @click="next"></span>
-        <span class="iconfont icon-ci-copy"></span>
+        <span class="iconfont icon-ci-copy" @click="showLyric=!showLyric" :style="{color:showLyric?'#EC4141':$fontColor}"></span>
       </div>
       <div class="progress">
-        <span>1</span>
+        <span style="text-align:left">{{currentTime | formDate}}</span>
         <div class="slider">
-          <el-slider v-model="currentTime"  :show-tooltip="false"></el-slider>
+          <el-slider v-model="progressVal"  :show-tooltip="false" @change="changeProgress"></el-slider>
         </div>
         <span>{{duration | formDate}}</span>
       </div>
@@ -94,8 +94,8 @@
             width="80"
             >
             <template slot-scope="scope">
-              <div style="text-align:center;">
-                <span class="iconfont icon-lajixiangzizhi" style="cursor: pointer;"></span> 
+              <div style="text-align:center;" @click.stop="deleteSong(scope.$index)">
+                <span class="iconfont icon-lajixiangzizhi" style="cursor: pointer;" ></span> 
               </div>
             </template>
           </el-table-column>
@@ -105,6 +105,9 @@
     
     </el-drawer>
     <audio id="myaudio" ref="myaudio" :src="getMusicUrl"></audio>
+    <div class="lyric" v-show="showLyric">
+      <p>尖峰時刻附件結果康捷空國際法蔣經國健身房積分那</p>
+    </div>
   </div>
 </template>
 
@@ -114,10 +117,12 @@ export default {
   data(){
     return{
       val:'', //歌曲信息
+      progressVal:0,//进度条
       voice:[1,2,3,4,5,6,7,8,9,10],
       curVoice:5, //当前音量值
       isShowPlayList:false,
       currentTime:0,
+      showLyric:true,
       isPlay:true, //播放状态
       duration:'00',//歌曲总秒数
       clickModel:1, //播放模式 1：列表循环 2：单纯循环 0：随机
@@ -182,6 +187,11 @@ export default {
       //暂停状态
       this.isPlay = true
     })
+     // 监听音频播放位置的改变
+    audio.addEventListener("timeupdate", () => {
+      this.currentTime=audio.currentTime
+      this.progressVal=(this.currentTime/this.duration)*100
+    })
   },
   computed:{
     ...mapGetters([
@@ -235,6 +245,17 @@ export default {
     deleteAll(){
       this.$store.commit("deleteAll")
       this.pauseMusic()
+    },
+    //从列表删除歌曲
+    deleteSong(index){
+      if(index===this.$store.state.index){
+        this.pauseMusic()
+      }
+      this.$store.commit("deleteSong",index)
+    },
+    changeProgress(val){
+      var audio = this.$refs.myaudio
+      audio.currentTime = val/100*this.duration
     }
   }
 }
@@ -272,6 +293,7 @@ export default {
     .el-drawer__open .el-drawer.rtl{
       height: calc(100% - 125px);
       margin-top:55px;
+      min-width: 240px;
       background-color: $bodyColor;
       color:$fontColor;
     }
@@ -284,7 +306,26 @@ export default {
   display: flex;
   flex-direction: row;
   width:100%;
+  position: relative;
   background-color: $playBgcColor;
+  .lyric{
+    width:50%;
+    position: absolute;
+    bottom: 200px;
+    left: 50%;
+    transform: translateX(-50%);
+    p{
+      text-align: center;
+      word-break:break-word;
+      word-break:break-all;
+      font: 700 26px "Comic Sans MS";
+      color: white;
+      text-shadow: 0 0 10px #9ff7c6,
+            5px -5px 10px #83d19d,
+            5px -5px 10px #8dd5eb,
+            -5px -15px 12px #7ddbb4
+    }
+  }
   .singer-info{
     height: 100%;
     width:200px;

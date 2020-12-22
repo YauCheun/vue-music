@@ -85,4 +85,9 @@ export const mutations = {
     state.index = 0
     window.localStorage.setItem("musicState", JSON.stringify({ list: state.list, index: state.index }), new Date().getDate + 20);
   },
+  deleteSong(state,index){
+    if(state.index==index) state.index=0
+    state.list.splice(index,1)
+    window.localStorage.setItem("musicState", JSON.stringify({ list: state.list, index: state.index }), new Date().getDate + 20);
+  }
 }

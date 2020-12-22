@@ -496,13 +496,18 @@ export default {
 </style>
 <style lang="scss">
 @import "@/assets/css/global.scss";
+.list{
+  .el-table__body-wrapper.is-scrolling-left {
+    overflow-x: hidden!important;
+  }
+}
 .el-table{
   &::before{
     height:0;
   }
 }
 .el-table--scrollable-x .el-table__body-wrapper{
-  overflow-x: hidden;
+  overflow-x: hidden!important;
 }
 thead.has-gutter{
   tr{
