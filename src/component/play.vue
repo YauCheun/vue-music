@@ -1,7 +1,10 @@
 <template>
   <div class="control-box">
     <div class="singer-info">
-      <div class="img">
+      <div class="img" @click="showMusicBox=!showMusicBox">
+        <div class="wrap-mask">
+          <i class="iconfont icon-fangda"></i>
+        </div>
         <img :src="getImgUrl" alt="">
       </div>
       <div class="info">
@@ -108,6 +111,11 @@
     <div class="lyric" v-show="showLyric">
       <p>尖峰時刻附件結果康捷空國際法蔣經國健身房積分那</p>
     </div>
+    <transition name="slide">
+      <div class="musicbox" v-show="showMusicBox">
+
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -123,6 +131,7 @@ export default {
       isShowPlayList:false,
       currentTime:0,
       showLyric:true,
+      showMusicBox:true,
       isPlay:true, //播放状态
       duration:'00',//歌曲总秒数
       clickModel:1, //播放模式 1：列表循环 2：单纯循环 0：随机
@@ -301,6 +310,40 @@ export default {
 </style>
 <style lang="scss" scoped>
 @import "@/assets/css/global.scss";
+.slide-enter-active {
+  animation-name: slideInUp;
+  animation-duration: 0.2s;
+  animation-fill-mode: both;
+}
+.slide-leave-active {
+  animation-name: slideOutDown;
+  animation-duration: 0.2s;
+  animation-fill-mode: both;
+}
+@keyframes slideInUp {
+  0% {
+    transform: translate(0, 100%);
+    visibility: visible;
+  }
+  to {
+    transform: translate(100%,0);
+  }
+}
+@keyframes slideOutDown {
+  0% {
+    transform: translate(100%,0);
+  }
+  to {
+    visibility: hidden;
+    transform: translate3d(0, 100%, 0);
+  }
+}
+.delay-leave-active {
+  -webkit-animation-delay: 0.2s;
+  -moz-animation-delay: 0.2s;
+  -o-animation-delay: 0.2s;
+  animation-delay: 0.2s;
+}
 .control-box{
   height:70px;
   display: flex;
@@ -308,6 +351,16 @@ export default {
   width:100%;
   position: relative;
   background-color: $playBgcColor;
+  .musicbox{
+    position:fixed;
+    z-index: 9999;
+    left:0;
+    top:55px;
+    right: 0;
+    bottom: 0;
+    height: calc(100% - 125px);
+    background-color: pink;
+  }
   .lyric{
     width:50%;
     position: absolute;
@@ -333,10 +386,35 @@ export default {
     display: flex;
     flex-direction: row;
     .img{
+      cursor: pointer;
+      width:50px;
+      height:50px;
+      position: relative;
       img{
         width:50px;
         height:50px;
         border-radius: 5px;
+      }
+      .wrap-mask{
+        height:100%;
+        width:100%;
+        position: absolute;
+        opacity: 0;
+        .iconfont{
+          box-sizing: border-box;
+          width:50px;
+          height: 50px;
+          display: inline-block;
+          padding:7px 0 0 7px;
+          font-size: 36px;
+          color: #fff;
+          font-weight: lighter;
+        }
+      }
+      &:hover .wrap-mask{
+        border-radius: 5px;
+        opacity: 0.8;
+        background: rgba(0,0,0,.4);
       }
     }
     .info{
