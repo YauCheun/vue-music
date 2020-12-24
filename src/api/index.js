@@ -32,4 +32,6 @@ export default {
   GetSongDetail:(data)=>axios.post('/song/detail',qs.stringify(data)),
   // 获取歌曲url
   GetSongUrl:(id)=>axios.post('/song/url?id='+id+'&br=999000'),
+  //获取歌词
+  getLyric:(id)=>axios.post('/lyric',qs.stringify(id))
 }

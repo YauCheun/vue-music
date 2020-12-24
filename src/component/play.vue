@@ -25,7 +25,7 @@
         <span class="iconfont icon-zanting play-stop" v-if="!isPlay" @click="pauseMusic"></span>
         <span class="iconfont icon-bofang5 play-stop" v-else @click="playMusic"></span>
         <span class="iconfont icon-xiayishou1" @click="next"></span>
-        <span class="iconfont icon-ci-copy" @click="showLyric=!showLyric" :style="{color:showLyric?'#EC4141':$fontColor}"></span>
+        <span class="iconfont icon-ci-copy" @click="showLyric=!showLyric" :class="{'hover-color':showLyric}"></span>
       </div>
       <div class="progress">
         <span style="text-align:left">{{currentTime | formDate}}</span>
@@ -109,7 +109,7 @@
     </el-drawer>
     <audio id="myaudio" ref="myaudio" :src="getMusicUrl"></audio>
     <div class="lyric" v-show="showLyric">
-      <p>尖峰時刻附件結果康捷空國際法蔣經國健身房積分那</p>
+      <p>{{ lyric }}</p>
     </div>
     <transition name="slide">
       <div class="musicbox" v-show="showMusicBox">
@@ -131,6 +131,8 @@ export default {
       isShowPlayList:false,
       currentTime:0,
       showLyric:true,
+      lyric:"",
+      currentIndex: 0,
       showMusicBox:true,
       isPlay:true, //播放状态
       duration:'00',//歌曲总秒数
@@ -191,8 +193,6 @@ export default {
       this.isPlay = false
     })
     audio.addEventListener("pause", () => {
-      // document.title = "深的个人博客"
-      // links.setAttribute("href", "/logo.ico")
       //暂停状态
       this.isPlay = true
     })
@@ -200,6 +200,35 @@ export default {
     audio.addEventListener("timeupdate", () => {
       this.currentTime=audio.currentTime
       this.progressVal=(this.currentTime/this.duration)*100
+      if(this.$store.state.song.lyric.length){
+        let lyricArray = this.$store.state.song.lyric
+        let length = lyricArray.length
+        //遍历所有歌词
+        //最后一句歌词没有下一句,所以不需要跟下一句的时间做比较
+        if (this.currentIndex == length - 2) {
+          //判断当前的时间是否大于等于最后一句的时间
+          if (this.currentTime >= lyricArray[length - 1][0]) {
+            //正在唱最后一句
+            this.currentIndex = length - 1
+            this.lyric = lyricArray[length - 1][1]
+          }
+        } else {
+          for (var i = 0; i < length - 1; i++) {
+            //将每个歌曲进度都跟数组中的歌词比较,在当前歌词的时间到下一句歌词的时间范围之内
+            if (
+              this.currentTime >= lyricArray[i][0] &&
+              this.currentTime < lyricArray[i + 1][0]
+            ) {
+              //设置正在播放的行号
+              this.currentIndex = i
+              this.lyric = lyricArray[i][1]
+              console.log(this.lyric)
+            }
+          }
+        }
+      }else{
+        this.lyric="暂无歌词"
+      }
     })
   },
   computed:{
@@ -313,29 +342,31 @@ export default {
 .slide-enter-active {
   animation-name: slideInUp;
   animation-duration: 0.2s;
+  transform-origin:0 100%;
   animation-fill-mode: both;
 }
 .slide-leave-active {
   animation-name: slideOutDown;
+  transform-origin:0% 100%;
   animation-duration: 0.2s;
   animation-fill-mode: both;
 }
 @keyframes slideInUp {
   0% {
-    transform: translate(0, 100%);
+    transform: scale(0);
     visibility: visible;
   }
   to {
-    transform: translate(100%,0);
+    transform: scale(1);
   }
 }
 @keyframes slideOutDown {
   0% {
-    transform: translate(100%,0);
+    transform: scale(1);
   }
   to {
     visibility: hidden;
-    transform: translate3d(0, 100%, 0);
+    transform: scale(0);
   }
 }
 .delay-leave-active {
@@ -372,7 +403,7 @@ export default {
       word-break:break-word;
       word-break:break-all;
       font: 700 26px "Comic Sans MS";
-      color: white;
+      color: rgb(49, 221, 233);
       text-shadow: 0 0 10px #9ff7c6,
             5px -5px 10px #83d19d,
             5px -5px 10px #8dd5eb,
@@ -474,6 +505,9 @@ export default {
         &:hover{
           color: #EC4141;
         }
+      }
+      .hover-color{
+        color: #EC4141;
       }
     }
     .progress{
