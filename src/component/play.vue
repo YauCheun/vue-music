@@ -154,7 +154,63 @@
               </div>
             </div>
             <div class="song-comment">
-
+              <!-- 精彩评论 -->
+              <div class="comment-wrap" v-if="hotComments !== undefined && hotComments.length !== 0">
+                <p class="title">
+                  精彩评论<span class="number">({{ hotComments.length }})</span>
+                </p>
+                <div class="comments-wrap">
+                  <!-- 评论 -->
+                  <div class="item" v-for="(item, index) in hotComments" :key="index">
+                    <div class="icon-wrap">
+                      <!-- 头像 -->
+                      <img :src="item.user.avatarUrl+'?param=50y50'" alt="" />
+                    </div>
+                    <div class="content-wrap">
+                      <div class="content">
+                        <span class="name">{{ item.user.nickname }}</span>
+                        <span class="comment">：{{ item.content }}</span>
+                      </div>
+                      <!-- 回复 -->
+                      <div class="re-content" v-if="item.beReplied.length !== 0">
+                        <span class="name">{{ item.beReplied[0].user.nickname }}</span>
+                        <span class="comment">：{{ item.beReplied[0].content }}</span>
+                      </div>
+                      <div class="date">{{ item.time | dateFormat }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- 最新评论 -->
+              <div class="comment-wrap">
+                <p class="title">
+                  最新评论<span class="number">({{ total }})</span>
+                </p>
+                <div class="comments-wrap">
+                  <!-- 评论 -->
+                  <div class="item" v-for="(item, index) in comments" :key="index">
+                    <div class="icon-wrap">
+                      <!-- 头像 -->
+                      <img :src="item.user.avatarUrl+'?param=50y50'" alt="" />
+                    </div>
+                    <div class="content-wrap">
+                      <div class="content">
+                        <span class="name">{{ item.user.nickname }}</span>
+                        <span class="comment">：{{ item.content }}</span>
+                      </div>
+                      <!-- 回复 -->
+                      <div class="re-content" v-if="item.beReplied.length !== 0">
+                        <span class="name">{{ item.beReplied[0].user.nickname }}</span>
+                        <span class="comment">：{{ item.beReplied[0].content }}</span>
+                      </div>
+                      <div class="date">{{ item.time | dateFormat }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- 分页器 -->
+              <el-pagination @current-change="handleCurrentChange" background layout="prev, pager, next" :total="total" :current-page="pageNum" :page-size="pageSize">
+              </el-pagination>
             </div>
           </el-scrollbar>
         </div>
@@ -165,6 +221,7 @@
 
 <script>
 import { mapGetters } from "vuex"
+import api from "@/api/index.js"
 export default {
   data(){
     return{
@@ -179,24 +236,15 @@ export default {
       showLyric:true,
       lyric:"",
       currentIndex: 0,
-      showMusicBox:true,
+      showMusicBox:false,
       isPlay:true, //播放状态
       duration:'00',//歌曲总秒数
       clickModel:1, //播放模式 1：列表循环 2：单纯循环 0：随机
-      tableData:[
-        {
-          name:11,
-          singerName:22
-        },
-        {
-          name:11,
-          singerName:22
-        },
-        {
-          name:11,
-          singerName:22
-        }
-      ]
+      pageSize:20,
+      pageNum:1,
+      total:0,
+      comments:[],//评论
+      hotComments:[] //热门评论
     }
   },
   filters: {
@@ -289,7 +337,9 @@ export default {
         this.lyric="暂无歌词"
       }
     })
+    //监听歌词滚动条
     this.handleScroll()
+    this.getMusicComments()
   },
   computed:{
     ...mapGetters([
@@ -298,7 +348,17 @@ export default {
       "getMusicUrl",
       "getImgUrl",
       "getIndex",
-    ])
+    ]),
+    isSongChange(){
+      return this.$store.state.song.id
+    }
+  },
+  watch:{
+    isSongChange(){
+      this.pageSize=20
+      this.pageNum=1
+      this.getMusicComments()
+    }
   },
   methods:{
     //监听歌词滚动条
@@ -365,7 +425,30 @@ export default {
     changeProgress(val){
       var audio = this.$refs.myaudio
       audio.currentTime = val/100*this.duration
-    }
+    },
+    // 获取歌曲评论
+    async getMusicComments() {
+      if(this.$store.state.song.id==''){
+        return 
+      }
+      try {
+        const res = await api.getMusicComments({
+          id: this.$store.state.song.id,
+          limit: this.pageSize,
+          offset: (this.pageNum - 1) * this.pageSize
+        })
+        this.comments = res.data.comments
+        this.hotComments =  res.data.hotComments
+        this.total =  res.data.total
+      } catch (error) {
+        console.log(error)
+        this.$message.error('获取歌曲评论失败')
+      }
+    },
+    handleCurrentChange(val) {
+      this.pageNum = val
+      this.getMusicComments()
+    },
   }
 }
 </script>
@@ -415,6 +498,13 @@ export default {
       overflow-x: hidden;
     }
   }
+  .content-box{
+    // .content{
+      .el-scrollbar__bar.is-vertical {
+      width:0;
+      }
+    // }
+  }
 </style>
 <style lang="scss" scoped>
 @import "@/assets/css/global.scss";
@@ -461,6 +551,8 @@ export default {
   width:100%;
   position: relative;
   background-color: $playBgcColor;
+  box-sizing: border-box;
+  border-top: 1px solid #ccc;
   .musicbox{
     position:fixed;
     z-index: 2000;
@@ -559,6 +651,63 @@ export default {
           }
         }
       }
+      .song-comment{
+        width: 100%;
+        margin: 0 auto;
+        .comment-wrap{
+          .title{
+            font-size: 18px;
+            .number{
+              color:$fontColor;
+              font-size: 18px;
+            }
+          }
+          .comments-wrap{
+            .item{
+              display: flex;
+              padding-top: 20px;
+              &:not(:last-child){
+                border-bottom: 1px solid#AEAEAE;
+              }
+              .icon-wrap{
+                margin-right: 15px;
+                cursor: pointer;
+                img{
+                  width: 40px;
+                  height: 40px;
+                  border-radius: 50%;
+                }
+              }
+              .date{
+                color: #bebebe;
+                font-size: 14px;
+              }
+              .content-wrap{
+                padding-bottom: 20px;
+                flex: 1;
+                .name{
+                  color: #517eaf;
+                  font-size: 14px;
+                  cursor: pointer;
+                }
+                .comment{
+                  font-size: 14px;
+                  color:$fontColor;
+                }
+                .content{
+                  margin-bottom: 10px;
+                }
+                .re-content{
+                  margin-bottom: 10px;
+                  padding: 10px;
+                  background-color:$hoverColor;
+                  border-radius: 5px;
+                }
+              }
+            }
+          }
+        }     
+      }
     }
   }
   .lyric{
@@ -567,16 +716,21 @@ export default {
     bottom: 200px;
     left: 50%;
     transform: translateX(-50%);
+    border-radius: 3px;
+    padding: 10px;
+    &:hover{
+      background: rgba(0,0,0,.1);
+    }
     p{
       text-align: center;
       word-break:break-word;
       word-break:break-all;
       font: 700 26px "Comic Sans MS";
-      color: rgb(49, 221, 233);
-      text-shadow: 0 0 10px #9ff7c6,
-            5px -5px 10px #83d19d,
-            5px -5px 10px #8dd5eb,
-            -5px -15px 12px #7ddbb4
+      color: rgb(239, 243, 26);
+      text-shadow: 0 0 5px #a5df73,
+            2px -2px 5px #8ddf23,
+            2px -2px 5px rgb(141, 172, 30),
+            -2px -7px 5px #7ddbb4
     }
   }
   .singer-info{
