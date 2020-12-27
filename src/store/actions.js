@@ -16,6 +16,7 @@ export const actions = {
         songName: song.name,
         picUrl: song.al.picUrl,
         author: song.ar[0].name,
+        album: song.al.name
     }
     //获取歌曲url
     let res = await api.GetSongUrl(

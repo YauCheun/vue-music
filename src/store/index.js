@@ -14,6 +14,7 @@ const store = new Vuex.Store({
             // https://i.loli.net/2020/03/26/k1KaSpxN47qi9Xc.jpg  是默认的图片路径
             picUrl: "https://i.loli.net/2020/03/26/k1KaSpxN47qi9Xc.jpg",
             id: "",
+            album:"", //专辑
             lyric: []//存储歌词的数组
         },
         list: [],//播放列表数组

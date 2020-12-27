@@ -113,7 +113,51 @@
     </div>
     <transition name="slide">
       <div class="musicbox" v-show="showMusicBox">
+        <div class="content-box">
+          <el-scrollbar style="height:100%">
+            <div class="song-info">
+              <div class="left">
+                <div class="img isRotate" ref="imgRotate">
+                  <img :src="getImgUrl" alt="">
+                </div>
+              </div>
+              <div class="right">
+                <div class="header">
+                  <div class="title">
+                    {{ this.$store.state.song.name}} <span>标准音质</span>
+                  </div>
+                  <div class="info">
+                    <span>
+                      专辑：<font>{{ this.$store.state.song.album}}</font>
+                    </span>
+                    <span style="margin-left:30px;">
+                      歌手：<font>{{ this.$store.state.song.author }}</font>
+                    </span>
+                  </div>
+                </div>
+                <div class="content">
+                  <el-scrollbar style="height:100%;" ref="scroll">
+                    <ul  v-if="this.$store.state.song.lyric.length">
+                      <li
+                        v-for="item,index in this.$store.state.song.lyric"
+                        :key="item[0]"
+                        :class="{'active':currentIndex==index}"
+                      >
+                      {{item[1]}}
+                      </li>
+                    </ul>
+                    <ul v-else> 
+                      <li  class="active">暂无歌词</li>  
+                    </ul>
+                  </el-scrollbar>
+                </div>
+              </div>
+            </div>
+            <div class="song-comment">
 
+            </div>
+          </el-scrollbar>
+        </div>
       </div>
     </transition>
   </div>
@@ -130,6 +174,8 @@ export default {
       curVoice:5, //当前音量值
       isShowPlayList:false,
       currentTime:0,
+      scrolltop:0, //滚动条位置
+      isScroll:false, //是否手动滚动歌词滚动条
       showLyric:true,
       lyric:"",
       currentIndex: 0,
@@ -168,6 +214,8 @@ export default {
     },
   },
   mounted(){
+    let state = this.$refs.imgRotate.style['animationPlayState']
+    this.$refs.imgRotate.style['animationPlayState'] = 'paused'; 
     let audio = this.$refs.myaudio
     audio.volume=this.curVoice/10
     //监听音频是否可以开始播放
@@ -191,10 +239,14 @@ export default {
       // links.setAttribute("href", this.getImgUrl)
       //播放状态
       this.isPlay = false
+      let state = this.$refs.imgRotate.style['animationPlayState']
+      this.$refs.imgRotate.style['animationPlayState'] = 'running'; 
     })
     audio.addEventListener("pause", () => {
       //暂停状态
       this.isPlay = true
+      let state = this.$refs.imgRotate.style['animationPlayState']
+      this.$refs.imgRotate.style['animationPlayState'] = 'paused'; 
     })
      // 监听音频播放位置的改变
     audio.addEventListener("timeupdate", () => {
@@ -204,6 +256,13 @@ export default {
         let lyricArray = this.$store.state.song.lyric
         let length = lyricArray.length
         //遍历所有歌词
+        //计算滚动条的位置
+        if (this.currentIndex >= 4) {
+          this.scrolltop = (this.currentIndex - 4) * 40
+          if(!this.isScroll){
+            this.$refs.scroll.wrap.scrollTop = this.scrolltop;//wrap 是源码中带的
+          }
+        }
         //最后一句歌词没有下一句,所以不需要跟下一句的时间做比较
         if (this.currentIndex == length - 2) {
           //判断当前的时间是否大于等于最后一句的时间
@@ -230,6 +289,7 @@ export default {
         this.lyric="暂无歌词"
       }
     })
+    this.handleScroll()
   },
   computed:{
     ...mapGetters([
@@ -241,6 +301,17 @@ export default {
     ])
   },
   methods:{
+    //监听歌词滚动条
+    handleScroll() {
+      let scrollbarEl = this.$refs.scroll.wrap
+      scrollbarEl.onscroll = () => {
+        this.timeId&&clearTimeout(this.timeId)
+        this.isScroll = true
+        this.timeId=setTimeout(()=>{
+          this.isScroll=false
+        },5000)
+      }
+    },
     //改变音量
     changeVoice(index){
       this.curVoice=index
@@ -328,12 +399,20 @@ export default {
     }
   }
   .control-box{
+    .el-drawer__wrapper{
+      z-index: 99999;
+    }
     .el-drawer__open .el-drawer.rtl{
       height: calc(100% - 125px);
       margin-top:55px;
       min-width: 240px;
       background-color: $bodyColor;
       color:$fontColor;
+    }
+  }
+  .musicbox{
+    .el-scrollbar__wrap{
+      overflow-x: hidden;
     }
   }
 </style>
@@ -384,13 +463,103 @@ export default {
   background-color: $playBgcColor;
   .musicbox{
     position:fixed;
-    z-index: 9999;
+    z-index: 2000;
     left:0;
     top:55px;
     right: 0;
     bottom: 0;
     height: calc(100% - 125px);
-    background-color: pink;
+    background-color: $bodyColor;
+    .content-box{
+      width: 780px;
+      height:100%;
+      margin:0 auto;
+      .song-info{
+        width: 100%;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        .left{
+          width: 50%;
+          .isRotate{
+            -webkit-animation: play 10s linear infinite;
+            -moz-animation: play 10s linear infinite;
+            animation: play 10s linear infinite;
+            @-webkit-keyframes play{
+                0%{-webkit-transform: rotate(0deg);}
+                100%{transform: rotate(360deg);}
+            }
+            @-moz-keyframes play {
+                0%{-moz-transform: rotate(0deg);}
+                100%{transform: rotate(360deg);}
+            }
+            @keyframes play{
+                0%{transform: rotate(0deg);}
+                100%{transform: rotate(360deg);}
+            }
+          }
+          .img{
+            margin-top:30px;
+            width:300px;
+            height: 300px;
+            background: url("../assets/images/singlecover.png");
+            background-size: cover;
+            padding: 50px;
+            border-radius: 50%;
+            img{
+              width:200px;
+              height: 200px;
+              border-radius: 50%;
+            }
+          }
+        }
+        .right{
+          width:50%;
+          padding-top: 30px;
+          .header{
+            .title{
+              color:$fontColor;
+              font-size: 24px;
+              line-height: 40px;
+              span{
+                font-size: 12px;
+                color: #EC4141;
+                border: 1px solid #EC4141;
+                padding: 2px;
+                border-radius: 2px;
+              }
+            }
+            .info{
+              color:$fontColor;
+              font-size: 14px;
+              span{
+              line-height: 36px;
+              }
+              font{
+                color:#507daf;
+              }
+            }
+          }
+          .content{
+            width: 100%;
+            height: 390px;
+            ul{
+              li{
+                font-size: 12px;
+                color:$fontColor;
+                line-height: 40px;
+              }
+              .active{
+                font-size: 20px;
+                font-weight: bold;
+                color: $themeColor;
+              }
+            }
+          }
+        }
+      }
+    }
   }
   .lyric{
     width:50%;
