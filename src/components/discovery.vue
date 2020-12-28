@@ -30,7 +30,7 @@
           独家放送 <i class="iconfont icon-zuoyou" style="font-size:14px;"></i>
         </h3> 
         <div class="list">
-          <div class="list-item" v-for="item in privateList" :key="item.picUrl">
+          <div class="list-item" v-for="item in privateList" :key="item.picUrl"  @click="toMvDetail(item.id)">
             <div class="img-wrap">
               <img :src="item.sPicUrl" alt="" />
               <span class="iconfont icon-bofang5 play"></span>
@@ -47,10 +47,10 @@
           <div class="list-item" v-for="item in newSongList" :key="item.picUrl">
             <div class="img-wrap">
               <img :src="item.picUrl+'?param=50y50'" alt="" />
-              <span class="iconfont icon-bofang5 play"></span>   
+              <span class="iconfont icon-bofang5 play" @click="playSong(item)"></span>   
             </div>
             <div class="detail">
-              <p class="name">{{ item.name }}</p>
+              <p class="name" @click="playSong(item)">{{ item.name }}</p>
               <span class="singer"><i class="iconfont icon-sq"></i><span>{{item.artists}}</span></span>
             </div>
           </div>
@@ -58,10 +58,10 @@
       </div>
       <div class="mv">
         <h3 class="title">
-          推荐MV <i class="iconfont icon-zuoyou" style="font-size:14px;"></i>
+          推荐MV <i class="iconfont icon-zuoyou" style="font-size:14px;" ></i>
         </h3> 
         <div class="list">
-          <div class="list-item" v-for="item in mvList" :key="item.id">
+          <div class="list-item" v-for="item in mvList" :key="item.id" @click="toMvDetail(item.id)">
             <div class="img-wrap">
               <div class="desc-wrap">
                 <span class="desc">{{ item.copywriter }}</span>
@@ -79,6 +79,7 @@
 
 <script>
 import api from "@/api"
+import { mapActions  } from "vuex"
 export default {
   data() {
     return {
@@ -97,6 +98,9 @@ export default {
     this.getRecommendMv()
   },
   methods: {
+    ...mapActions([
+      'getSong'
+    ]),
     //获取轮播图
     async getBanner(){
       try {
@@ -155,9 +159,17 @@ export default {
         this.$message.error('获取推荐mv失败')
       }
     },
+    //播放音乐
+    playSong(row){
+      this.getSong({id:row.id,autoPlay:true})
+    },
     // 跳转到歌单详情
     toDetailList(id){
       this.$router.push(`/detaillist?id=${id}`)
+    },
+    //跳转mv详情
+    toMvDetail(id){
+      this.$router.push(`/mvdetail?id=${id}`)
     }
   }
 }

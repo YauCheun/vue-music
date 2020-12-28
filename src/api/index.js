@@ -36,4 +36,14 @@ export default {
   getLyric:(id)=>axios.post('/lyric',qs.stringify(id)),
   // 获取歌曲评论
   getMusicComments:(data)=>axios.post('/comment/music',qs.stringify(data)),
+  // 获取MV播放地址
+  getMvUrl:(param)=> axios.post(`/mv/url`, param),
+  // 获取MV详情
+  getMvDetail:(param) => axios.post(`/mv/detail`, param),
+  // 获取歌手头像
+  getArtistIcon:(param) =>axios.post('/artists', param),
+  // 获取MV评论
+  getMvComment:(id, param)=>axios.post('/comment/mv', param),
+  // 获取相关MV
+  getSimiMvUrl:(param) =>axios.post('/simi/mv', param)
 }

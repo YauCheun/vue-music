@@ -9,6 +9,8 @@ import songs from '_c/songs'
 import mvs from '_c/mvs'
 import ranking from '_c/ranking'
 import singers from '_c/singers'
+import mvdetail from '_c/mvdetail'
+
 
 
 
@@ -20,6 +22,7 @@ export default new Router({
     { path: '/detaillist',component: detaillist},
     { path: '/songs',component: songs},
     { path: '/mvs',component: mvs},
+    { path: '/mvdetail',component: mvdetail},
     { path: '/ranking',component: ranking},
     { path: '/singers',component: singers}
   ]

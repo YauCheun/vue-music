@@ -1,6 +1,6 @@
 import api from "@/api/index.js"
 import {parseLyric} from './parseLysic'
-
+import Vue from 'vue'
 export const actions = {
   //获取歌曲信息
   async getSong(context, data) {
@@ -23,7 +23,7 @@ export const actions = {
       data.id
     )
     //判断是否可以获取到歌曲的播放地址
-    if (!res.data.data[0].url) {
+    if (!res.data.data[0].url&&data.autoPlay) {
         Vue.prototype.$message.error(`歌曲 ${music.songName} 是vip歌曲无法获取`);
         return;
     }

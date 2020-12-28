@@ -222,6 +222,7 @@
 <script>
 import { mapGetters } from "vuex"
 import api from "@/api/index.js"
+import eventBus from "@/util/eventBus.js"
 export default {
   data(){
     return{
@@ -260,6 +261,11 @@ export default {
       }
       return m + ":" + s
     },
+  },
+  created(){
+    eventBus.$on("paused",()=>{
+      this.pauseMusic()
+    })
   },
   mounted(){
     let state = this.$refs.imgRotate.style['animationPlayState']

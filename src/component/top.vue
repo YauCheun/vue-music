@@ -5,10 +5,10 @@
     </div>
     <div class="top-btn">
       <div class="btn">
-        <i class="iconfont icon-zuoyou1"></i>
+        <i class="iconfont icon-zuoyou1" @click="prev"></i>
       </div>
       <div class="btn">
-        <i class="iconfont icon-zuoyou"></i>
+        <i class="iconfont icon-zuoyou" @click="next"></i>
       </div>
     </div>
     <div class="top-search">
@@ -54,6 +54,12 @@ export default {
         document.getElementsByTagName('body')[0].style.setProperty('--myhoverColor', '#333')
         document.getElementsByTagName('body')[0].style.setProperty('--myPlayBgcColor', '#222225')
       }
+    },
+    prev(){
+      this.$router.go(-1)
+    },
+    next(){
+      this.$router.go(1)
     }
   }
 }

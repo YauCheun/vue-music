@@ -21,11 +21,11 @@
         <div class="btn-box">          
           <div class="play-wrap">
             <span class="iconfont icon-bofang5"></span>
-            <span class="text">播放全部</span>
+            <span class="text" @click="playAll">播放全部</span>
           </div>
           <div class="play-wrap add">
             <span class="iconfont icon-jiatianjiakuangxuanduoxuan-8"></span>
-            <span class="text">添加</span>
+            <span class="text" @click="addList">添加</span>
           </div>
           <div class="play-wrap add">
             <span class="iconfont icon-fenxiang_2"></span>
@@ -184,9 +184,11 @@ export default {
     //getDetailList
   },
   activated(){
-    this.id=this.$route.query.id
-    this.getDetailList(this.id)
-    this.getPlaylistComments()
+    if(!(this.id&&this.$route.query.id==this.id)){
+      this.id=this.$route.query.id
+      this.getDetailList(this.id)
+      this.getPlaylistComments()
+    }
   },
   // watch:{
   //   'this.$route.query.id':{
@@ -204,7 +206,6 @@ export default {
     //播放音乐
     playSong(row){
       this.getSong({id:row.id,autoPlay:true})
-      console.log(row)
     },
     //获取歌单详情
     async getDetailList(id){
@@ -246,6 +247,17 @@ export default {
       this.pageNum = val
       this.getPlaylistComments()
     },
+    async playAll(){
+      for(let i=0;i<this.tableData.length;i++){
+        await this.getSong({id:this.tableData[i].id,autoPlay:false})
+      }
+      this.getSong({id:this.tableData[0].id,autoPlay:true})
+    },
+    async addList(){
+      for(let i=0;i<this.tableData.length;i++){
+        await this.getSong({id:this.tableData[i].id,autoPlay:false})
+      }
+    }
   }
 }
 </script>

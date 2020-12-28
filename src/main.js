@@ -52,7 +52,12 @@ Vue.filter('playTimeFormat', function (originVal) {
   }
   return `${min}:${sec}`
 })
-
+Vue.filter('playNumFormat', function (playCount) {
+  if (playCount > 100000) {
+    return parseInt(playCount / 10000) + '万'
+  }
+  return playCount
+})
 // 公共样式
 import "@/assets/icon/iconfont.css";
 
