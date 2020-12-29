@@ -45,5 +45,9 @@ export default {
   // 获取MV评论
   getMvComment:(id, param)=>axios.post('/comment/mv', param),
   // 获取相关MV
-  getSimiMvUrl:(param) =>axios.post('/simi/mv', param)
+  getSimiMvUrl:(param) =>axios.post('/simi/mv', param),
+  // 获取精品歌单
+  getTopPlaylist:(param) => axios.post('/top/playlist/highquality', param),
+  // 获取歌单列表
+  getPalylist:(param)=>axios.post('/top/playlist', param)
 }

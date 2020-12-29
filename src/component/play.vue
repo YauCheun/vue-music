@@ -140,7 +140,7 @@
                     <ul  v-if="this.$store.state.song.lyric.length">
                       <li
                         v-for="item,index in this.$store.state.song.lyric"
-                        :key="item[0]"
+                        :key="index"
                         :class="{'active':currentIndex==index}"
                       >
                       {{item[1]}}
@@ -161,7 +161,7 @@
                 </p>
                 <div class="comments-wrap">
                   <!-- 评论 -->
-                  <div class="item" v-for="(item, index) in hotComments" :key="index">
+                  <div class="item" v-for="(item, index) in hotComments" :key="item.id">
                     <div class="icon-wrap">
                       <!-- 头像 -->
                       <img :src="item.user.avatarUrl+'?param=50y50'" alt="" />
@@ -188,7 +188,7 @@
                 </p>
                 <div class="comments-wrap">
                   <!-- 评论 -->
-                  <div class="item" v-for="(item, index) in comments" :key="index">
+                  <div class="item" v-for="(item, index) in comments" :key="item.id">
                     <div class="icon-wrap">
                       <!-- 头像 -->
                       <img :src="item.user.avatarUrl+'?param=50y50'" alt="" />

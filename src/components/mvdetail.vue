@@ -1,5 +1,8 @@
 <template>
-    <div style="height:100%;width:100%">
+    <div style="height:100%;width:100%"
+      v-loading="loading"
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.8)">
     <el-scrollbar style="height:100%">
     <div class="mv-container">
     <div class="mv-wrap">
@@ -118,6 +121,7 @@ export default {
   name: 'mvdetail',
   data() {
     return {
+      loading:true,
       id: '',
       // 总条数
       total: 20,
@@ -134,22 +138,25 @@ export default {
       comments: []
     }
   },
-  created() {
+  async created() {
     eventBus.$emit("paused")
     this.id = this.$route.query.id
-    this._getMvUrl()
-    this._getMvDetail()
-    this._getSimiMvUrl()
-    this._getMvComment()
+    await this._getMvDetail()
+    await this._getSimiMvUrl()
+    await this._getMvComment()
+    await this._getMvUrl()
+    this.loading=false
   },
-  activated(){
+  async activated(){
     eventBus.$emit("paused")
     if(!(this.id&&this.$route.query.id==this.id)){
       this.id=this.$route.query.id
-      this._getMvUrl()
-      this._getMvDetail()
-      this._getSimiMvUrl()
-      this._getMvComment()
+      this.loading=true
+      await this._getMvDetail()
+      await this._getSimiMvUrl()
+      await this._getMvComment()
+      await this._getMvUrl()
+      this.loading=false
     }
   },
   methods: {

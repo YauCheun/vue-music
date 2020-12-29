@@ -1,5 +1,8 @@
 <template>
-  <div class="discovery-container">
+  <div class="discovery-container"  
+    v-loading="loading"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)">
     <el-scrollbar style="height:100%;width:100%">
       <div class="banner">
         <el-carousel :interval="4000" type="card" height="250px">
@@ -83,6 +86,7 @@ import { mapActions  } from "vuex"
 export default {
   data() {
     return {
+      loading:true,
       bannerList:[],//轮播数据
       recommendList:[], //推荐歌单
       privateList:[], //独家放送
@@ -90,12 +94,13 @@ export default {
       mvList:[] //推荐mv
     }
   },
-  created() {
-    this.getBanner()
-    this.getRecommend()
-    this.getPrivatecontent()
-    this.getNewSong()
-    this.getRecommendMv()
+  async created() {
+    await this.getBanner()
+    await this.getRecommend()
+    await this.getPrivatecontent()
+    await this.getNewSong()
+    await this.getRecommendMv()
+    this.loading=false
   },
   methods: {
     ...mapActions([

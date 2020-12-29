@@ -1,5 +1,8 @@
 <template>
-  <div class="detaillist-contanier">
+  <div class="detaillist-contanier"  
+    v-loading="loading"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)">
     <el-scrollbar style="height:100%">
     <div class="top-wrap">
       <div class="img-wrap">
@@ -164,6 +167,7 @@ export default {
   name:'detaillist',
   data(){
     return {
+      loading:true,
       id:'',
       activeIndex:'1',
       tableData:[],
@@ -177,17 +181,20 @@ export default {
       pageSize:10//页面数量
     }
   },
-  created() {
+  async created() {
     this.id=this.$route.query.id
-    this.getDetailList(this.id)
-    this.getPlaylistComments()
+    await this.getDetailList(this.id)
+    await this.getPlaylistComments()
+    this.loading=false
     //getDetailList
   },
-  activated(){
+  async activated(){
     if(!(this.id&&this.$route.query.id==this.id)){
       this.id=this.$route.query.id
-      this.getDetailList(this.id)
-      this.getPlaylistComments()
+      this.loading=true
+      await this.getDetailList(this.id)
+      await this.getPlaylistComments()
+      this.loading=false
     }
   },
   // watch:{

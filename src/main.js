@@ -3,7 +3,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from "@/store"
-import { Input,Button,Tabs,TabPane,Pagination,Drawer,Carousel,CarouselItem,Message,Tag,Scrollbar,Table,TableColumn,Slider} from 'element-ui';
+import { Input,Button,Tabs,Loading,TabPane,Pagination,Drawer,Carousel,CarouselItem,Message,Tag,Scrollbar,Table,TableColumn,Slider} from 'element-ui';
 // 在调用 Vue.use 前，给 Message 添加 install 方法
 
 
@@ -25,7 +25,7 @@ Vue.use(TableColumn)
 Vue.use(Pagination)
 Vue.use(Slider)
 Vue.use(Drawer)
-
+Vue.use(Loading)
 
 Vue.filter('dateFormat', function (originVal) {
   const dt = new Date(originVal)
