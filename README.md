@@ -1,8 +1,26 @@
-# cloudmusic
 
-> 高仿网易云音乐
 
-## Build Setup
+> 根据网易云ui实现
+# vue-music-player
+
+#### 介绍
+根据网易云ui实现
+
+
+#### 软件架构
+
+后端使用[NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)进行反向代理
+
+数据来源于网易云音乐接口
+
+##### 前端使用技术
+
+- vue 2.5.2
+- vue-router 3.0.1
+- vuex 3.6.0
+- axios 0.19.0
+- element-ui 2.14.1
+#### 安装项目
 
 ``` bash
 # install dependencies
