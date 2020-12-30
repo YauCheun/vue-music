@@ -49,5 +49,9 @@ export default {
   // 获取精品歌单
   getTopPlaylist:(param) => axios.post('/top/playlist/highquality', param),
   // 获取歌单列表
-  getPalylist:(param)=>axios.post('/top/playlist', param)
+  getPalylist:(param)=>axios.post('/top/playlist', param),
+  // 获取Mv列表
+  getMvs:(param) => axios.post('/mv/all', param),
+  // 获取最新音乐
+  getNewSongs:(param)=> axios.post('/top/song', param)
 }

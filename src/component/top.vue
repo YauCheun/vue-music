@@ -1,7 +1,7 @@
 <template >
   <div class="top-container">
     <div class="top-img">
-      <span>Zy音乐盒</span>
+      <span style="cursor:pointer" @click="toHomeClick">Zy音乐盒</span>
     </div>
     <div class="top-btn">
       <div class="btn">
@@ -60,7 +60,13 @@ export default {
     },
     next(){
       this.$router.go(1)
-    }
+    },
+    toHomeClick() {
+      if ('/discovery' === this.$route.path) {
+        return
+      }
+      this.$router.push(`/discovery`)
+    },
   }
 }
 </script>

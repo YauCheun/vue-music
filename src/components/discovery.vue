@@ -2,7 +2,7 @@
   <div class="discovery-container"  
     v-loading="loading"
     element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)">
+    element-loading-background="rgba(0, 0, 0, 0.3)">
     <el-scrollbar style="height:100%;width:100%">
       <div class="banner">
         <el-carousel :interval="4000" type="card" height="250px">
