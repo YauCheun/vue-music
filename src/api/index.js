@@ -53,5 +53,11 @@ export default {
   // 获取Mv列表
   getMvs:(param) => axios.post('/mv/all', param),
   // 获取最新音乐
-  getNewSongs:(param)=> axios.post('/top/song', param)
+  getNewSongs:(param)=> axios.post('/top/song', param),
+  // 获取排行榜单
+  getToplist:(param)=> axios.post('/toplist', param),
+   // 获取歌手排行
+  getSingerList:(param)=> axios.get(`/artist/list?type=${param.type}&area=${param.area}&initial=${param.initial}&offset=${param.offset}`),
+  // 查询
+  search:(param)=> axios.post('search/get', qs.stringify(param))
 }

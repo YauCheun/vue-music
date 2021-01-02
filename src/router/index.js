@@ -10,6 +10,7 @@ import mvs from '_c/mvs'
 import ranking from '_c/ranking'
 import singers from '_c/singers'
 import mvdetail from '_c/mvdetail'
+import result from '_c/result'
 
 
 
@@ -24,6 +25,7 @@ export default new Router({
     { path: '/mvs',component: mvs},
     { path: '/mvdetail',component: mvdetail},
     { path: '/ranking',component: ranking},
-    { path: '/singers',component: singers}
+    { path: '/singers',component: singers},
+    { path: '/result',component: result}
   ]
 })

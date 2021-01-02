@@ -15,7 +15,7 @@
         <div class="list">
           <div class="list-item" v-for="item in songs" :key="item.id" @click="playSong(item)">
             <div class="img-wrap">
-              <img :src="item.album.picUrl+'?param=150y150'" alt="" />
+              <img :src="item.album.picUrl+'?param=200y200'" alt="" />
               <span class="iconfont icon-bofang5 play"></span>
             </div>
             <p class="name">{{ item.name }}</p>

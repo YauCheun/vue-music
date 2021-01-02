@@ -15,8 +15,10 @@
       <el-input
         placeholder="请输入内容"
         size="small"
-        v-model="searchKey">
-        <i slot="prefix" class="el-input__icon el-icon-search"></i>
+        v-model="searchKey"
+        @change="toResult"
+        >
+        <i slot="prefix" @click="toResult" class="el-input__icon el-icon-search"></i>
       </el-input>
     </div>
     <div class="top-theme">
@@ -37,6 +39,15 @@ export default {
     }
   },
   methods: {
+    toResult() {
+      if (this.searchKey === '') {
+        // 提示用户
+        this.$message.warning('请输入内容!')
+      } else {
+        // 携带数据去搜索页面
+        this.$router.push(`/result?q=${this.searchKey}`)
+      }
+    },
     changetheme(index){
       this.current=index
       if(index==0){

@@ -7,7 +7,7 @@
   <div class="mvs-container">
     <div class="filter-wrap">
       <div class="seciton-wrap">
-        <span class="section-type">地区:</span>
+        <span class="section-type" style="font-size:12px">地区:</span>
         <ul class="tabs-wrap">
           <li class="tab"><span class="title" @click="area = '全部'" :class="{ active: area === '全部' }">全部</span></li>
           <li class="tab"><span class="title" @click="area = '内地'" :class="{ active: area === '内地' }">内地</span></li>
@@ -18,7 +18,7 @@
         </ul>
       </div>
       <div class="type-wrap">
-        <span class="type-type">类型:</span>
+        <span class="type-type" style="font-size:12px">类型:</span>
         <ul class="tabs-wrap">
           <li class="tab">
             <span class="title" @click="type = '全部'" :class="{ active: type === '全部' }">全部</span>
@@ -37,8 +37,8 @@
           </li>
         </ul>
       </div>
-      <div class="order-wrap">
-        <span class="order-type">排序:</span>
+      <div class="order-wrap" >
+        <span class="order-type" style="font-size:12px">排序:</span>
         <ul class="tabs-wrap">
           <li class="tab">
             <span class="title" @click="order = '上升最快'" :class="{ active: order === '上升最快' }">上升最快</span>
@@ -168,6 +168,7 @@ export default {
       }
       .title {
         color: gray;
+        font-size: 12px;
         cursor: pointer;
         padding: 5px 20px;
         &::before {
