@@ -119,6 +119,9 @@ export default {
       console.log(res)
       this.singerList=this.singerList.concat(res.artists)
       this.loading=false
+    },
+    toDetailList(id){
+      this.$router.push(`/singerdetail?id=${id}`)
     }
   }
 }

@@ -11,6 +11,8 @@ import ranking from '_c/ranking'
 import singers from '_c/singers'
 import mvdetail from '_c/mvdetail'
 import result from '_c/result'
+import singerdetail from '_c/singerdetail'
+import ablumlist from '_c/ablumlist'
 
 
 
@@ -26,6 +28,8 @@ export default new Router({
     { path: '/mvdetail',component: mvdetail},
     { path: '/ranking',component: ranking},
     { path: '/singers',component: singers},
-    { path: '/result',component: result}
+    { path: '/result',component: result},
+    { path: '/singerdetail',component: singerdetail},
+    { path: '/ablumlist',component: ablumlist}
   ]
 })

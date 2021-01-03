@@ -59,5 +59,18 @@ export default {
    // 获取歌手排行
   getSingerList:(param)=> axios.get(`/artist/list?type=${param.type}&area=${param.area}&initial=${param.initial}&offset=${param.offset}`),
   // 查询
-  search:(param)=> axios.post('search/get', qs.stringify(param))
+  search:(param)=> axios.post('/search/get', qs.stringify(param)),
+  // 获取歌手热门歌曲
+  getTopSong:(param)=> axios.post('/artist/top/song', param),
+  // 获取歌手MV
+  getSingerMv:(param)=> axios.post('/artist/mv', param),
+  // 获取歌手专辑
+  getAlbum:(param)=> axios.post('/artist/album', param),
+   // 获取专辑
+  getAlbumContent:(param)=> axios.post('/album', param),
+  // 获取专辑评论
+  getAlbumComments:(data)=>axios.post('/comment/album',qs.stringify(data)),
+   // 获取歌手单曲
+  getArtists:(param)=> axios.post('/artists', param)
+
 }

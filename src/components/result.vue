@@ -12,35 +12,48 @@
     </div>
     <el-tabs v-model="activeIndex" class="tabs">
       <el-tab-pane label="歌曲" name="单曲">
-        <table class="el-table">
-          <thead>
-            <th></th>
-            <th>音乐标题</th>
-            <th>歌手</th>
-            <th>专辑</th>
-            <th>时长</th>
-          </thead>
-          <tbody>
-            <tr class="el-table__row" v-for="(item, index) in songs" :key="index" @click="playMusic(item.id)">
-              <td>{{ index + 1 }}</td>
-              <td>
-                <div class="song-wrap">
-                  <div class="name-wrap">
-                    <!-- 名称 -->
-                    <span>{{ item.name }}</span>
-                    <!-- mv图标 -->
-                    <span v-if="item.mvid !== 0" class="iconfont icon-mv" @click.stop="toMv(item.mvid)"></span>
-                  </div>
-                  <!-- 二级标题 -->
-                  <span v-if="item.alias.length !== 0">{{ item.alias[0] }}</span>
-                </div>
-              </td>
-              <td>{{ item.artists[0].name }}</td>
-              <td>{{ item.album.name }}</td>
-              <td>{{ item.duration | playTimeFormat }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <el-table
+        :data="songs"
+        stripe
+        style="width: 100%"
+        >
+        <!-- <el-table-column
+          align="center"
+          prop="index"
+          label="序号"
+          width="50">
+          <template slot-scope="scope">
+            <span >{{scope.$index}}</span>
+          </template>
+        </el-table-column> -->
+          <el-table-column
+            label="操作"
+            align="center"
+            width="80">
+            <template slot-scope="scope">
+              <div class="img">
+                <img :src="scope.row.picUrl+'?param=130y130'" style="width:50px;" alt="">
+                <i class="iconfont icon-bofang5 play" @click="playSong(scope.row)"></i>
+              </div> 
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="name"
+            label="音乐标题">
+          </el-table-column>
+          <el-table-column
+            prop="singerName"
+            label="歌手">
+          </el-table-column>
+          <el-table-column
+            prop="zjName"
+            label="专辑">
+          </el-table-column>
+          <el-table-column
+            prop="time"
+            label="时长">
+          </el-table-column>
+        </el-table>
       </el-tab-pane>
 
       <el-tab-pane label="歌单" name="歌单">
@@ -52,7 +65,7 @@
                 <span class="num">{{ item.playCount | playNumFormat }}</span>
               </div>
               <img :src="item.coverImgUrl+'?param=200y200'" alt="" />
-              <span class="iconfont icon-play"></span>
+              <span class="iconfont icon-bofang5 icon-play"></span>
             </div>
             <p class="name">{{ item.name }}</p>
           </div>
@@ -64,9 +77,9 @@
           <div class="item" v-for="(item, index) in mvs" :key="index" @click="toMv(item.id)">
             <div class="img-wrap">
               <img :src="item.cover+'?param=250y150'" alt="" />
-              <span class="iconfont icon-play"></span>
+              <span class="iconfont icon-bofang5 icon-play"></span>
               <div class="num-wrap">
-                <div class="iconfont icon-play"></div>
+                <div class="iconfont icon-bofang1 icon-play"></div>
                 <div class="num">{{ item.playCount | playNumFormat }}</div>
               </div>
               <span class="time">{{ item.duration | playTimeFormat }}</span>
@@ -147,6 +160,10 @@ export default {
     ...mapActions([
       'getSong'
     ]),
+    //播放音乐
+    playSong(row){
+      this.getSong({id:row.id,autoPlay:true})
+    },
     // 页码改变事件
     handleCurrentChange(val) {
       // 保存页码
@@ -170,6 +187,12 @@ export default {
       }
       if (this.type === 1) {
         this.songs = resp.result.songs
+        this.songs.forEach(item=>{
+          item.picUrl=item.album.artist.picUrl?item.album.artist.picUrl:item.album.artist.img1v1Url
+          item.zjName=item.album.name
+          item.singerName=item.artists[0].name 
+          item.time= this.$options.filters['playTimeFormat'](item.duration)
+        })
         this.count = resp.result.songCount
       } else if (this.type === 1000) {
         this.playlists = resp.result.playlists
@@ -187,11 +210,11 @@ export default {
     },
 
     toPlaylist(id) {
-      this.$router.push(`/playlist?id=${id}`)
+      this.$router.push(`/detaillist?id=${id}`)
     },
 
     toMv(id) {
-      this.$router.push(`/mv?id=${id}`)
+      this.$router.push(`/mvdetail?id=${id}`)
     }
   }
 }
@@ -238,19 +261,16 @@ export default {
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
-          width: 40px;
-          height: 40px;
+          width: 36px;
+          height: 36px;
           color: #dd6d60;
-          font-size: 20px;
+          font-size: 22px;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
           background: rgba(255, 255, 255, 0.8);
           opacity: 0;
-          &::before {
-            transform: translateX(3px);
-          }
         }
         &:hover > .icon-play {
           opacity: 1;
@@ -261,12 +281,12 @@ export default {
         }
         .num-wrap {
           position: absolute;
-          color:$fontColor;
+          color: #fff;
           top: 0;
           right: 0;
           display: flex;
           align-items: center;
-          font-size: 15px;
+          font-size: 14px;
           padding-right: 5px;
           padding-top: 2px;
           .icon-play {
@@ -337,6 +357,97 @@ export default {
     .is-active{
       color: #409EFF
     }
+    .el-table__body-wrapper{
+    .img{
+      width:50px;
+      height:50px;
+      position: relative;
+      cursor: pointer;
+      border-radius: 8px;
+      img{
+        border-radius: 8px;
+      }
+      .play{
+        position: absolute;
+        padding-top:1px;
+        box-sizing: border-box;
+        padding-left: 1px;
+        top:12px;
+        left:12px;
+        color: #ec4141;
+        font-size: 12px;
+        width:26px;
+        height:26px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, .8);
+      }
+    }
+  }
+
+  }
+  
+}
+</style>
+<style lang="scss">
+@import "@/assets/css/global.scss";
+.list{
+  .el-table__body-wrapper.is-scrolling-left {
+    overflow-x: hidden!important;
+  }
+}
+.el-table{
+  &::before{
+    height:0;
+  }
+}
+.el-table td, .el-table th{
+  padding: 2px 0;
+}
+.el-table--scrollable-x .el-table__body-wrapper{
+  overflow-x: hidden!important;
+}
+thead.has-gutter{
+  tr{
+    background: $bodyColor!important;
+    border-bottom:1px solid $hoverColor;
+    th{
+      background: $bodyColor!important;
+      border-bottom:none;
+      // border-bottom:1px solid $hoverColor!important;
+    }
+  }
+}
+tr.el-table__row{
+  cursor: pointer;
+  background: $bodyColor!important;
+  &:hover td{
+    background-color:#F5F7FA!important;
+  }
+  td{
+    background: $bodyColor;
+    border-bottom:none;
+  }
+
+}
+tr.el-table__row.el-table__row--striped{
+  background: $hoverColor!important;
+  &:hover td{
+    background-color:#F5F7FA!important;
+  }
+  td{
+    background: $hoverColor!important;
+    border-bottom:none;
+  }
+}
+.tabs {
+  .el-tabs__item{
+    color:$fontColor;
+    &:hover{
+      color: #409EFF
+    }
+  }
+  .is-active{
+    color: #409EFF
   }
 }
 </style>
